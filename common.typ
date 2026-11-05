@@ -100,6 +100,35 @@
 ]
 
 // ============================================================
+// § 標題編號
+// § Heading numbering
+// ============================================================
+#let ch-big-numbers = ("壹", "貳", "參", "肆", "伍", "陸", "柒", "捌", "玖", "拾")
+
+// 單一標題的編號，如「(三) 」；n 為各層計數，例如 (1, 2, 3)。
+// large 為 true 時，於現有層級上方多加一層「章」。
+// The number of one heading, e.g. "(三) "; n holds the count at each level, e.g. (1, 2, 3).
+// When large is true, an extra "chapter" level is added on top.
+#let heading-number(n, large: false) = {
+  let level-offset = if large { 1 } else { 0 }
+  let level = n.len() - level-offset
+  let val = n.last()
+  if large and n.len() == 1 {
+    numbering("第一章 ", val)
+  } else if level == 1 {
+    if val <= 10 { ch-big-numbers.at(val - 1) + "、" } else { str(val) }
+  } else if level == 2 {
+    numbering("一、", ..n.slice(1 + level-offset))
+  } else if level == 3 {
+    numbering("(一) ", ..n.slice(2 + level-offset))
+  } else if level == 4 {
+    numbering("1.", ..n.slice(3 + level-offset))
+  } else if level == 5 {
+    numbering("(1) ", ..n.slice(4 + level-offset))
+  }
+}
+
+// ============================================================
 // § 基本排版規則
 // § Base typesetting rules
 //
@@ -193,32 +222,7 @@
   // 3. 標題層級設定 / Heading level setup
   show heading: set text(font: font-hei, weight: "bold")
 
-  let ch-big-numbers = ("壹", "貳", "參", "肆", "伍", "陸", "柒", "捌", "玖", "拾")
-
-  // large 為 true 時，於現有層級上方多加一層「章」
-  // When large is true, an extra "chapter" level is added on top
-  let level-offset = if large { 1 } else { 0 }
-
-  set heading(
-    numbering: (..nums) => {
-      let n = nums.pos()
-      let level = n.len() - level-offset
-      let val = n.last()
-      if large and n.len() == 1 {
-        numbering("第一章 ", val)
-      } else if level == 1 {
-        if val <= 10 { ch-big-numbers.at(val - 1) + "、" } else { str(val) }
-      } else if level == 2 {
-        numbering("一、", ..n.slice(1 + level-offset))
-      } else if level == 3 {
-        numbering("(一) ", ..n.slice(2 + level-offset))
-      } else if level == 4 {
-        numbering("1.", ..n.slice(3 + level-offset))
-      } else if level == 5 {
-        numbering("(1) ", ..n.slice(4 + level-offset))
-      }
-    },
-  )
+  set heading(numbering: (..nums) => heading-number(nums.pos(), large: large))
 
   // 標題顯示規則 / Heading display rules:
   //   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
