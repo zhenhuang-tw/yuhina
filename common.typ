@@ -128,6 +128,16 @@
   }
 }
 
+// 交互參照用的完整路徑，如 (1, 2, 3) →「壹、二、(三)」、(1, 2) →「壹、二」。
+// 各層編號去除空白後相連，並去掉結尾的「、」或「.」，以便後接文字或標點。
+// The full path used in cross-references, e.g. (1, 2, 3) -> 壹、二、(三), (1, 2) -> 壹、二.
+// Level numbers are joined without spaces, and a trailing 、 or . is dropped so
+// that text or punctuation can follow.
+#let heading-path(n, large: false) = {
+  let parts = range(1, n.len() + 1).map(i => heading-number(n.slice(0, i), large: large))
+  parts.filter(p => p != none).map(p => p.trim()).join().trim(regex("[、.]"), at: end)
+}
+
 // ============================================================
 // § 基本排版規則
 // § Base typesetting rules
@@ -223,6 +233,22 @@
   show heading: set text(font: font-hei, weight: "bold")
 
   set heading(numbering: (..nums) => heading-number(nums.pos(), large: large))
+
+  // 交互參照：@label 指向有編號的標題時，輸出完整層級路徑，例如「壹、二、(三)」；
+  // 以 @label[見] 傳入的補充文字會接在路徑前面。頁碼參照 ref(form: "page") 與
+  // 其餘參照（含文獻引用）原樣交回。
+  // Cross-references: @label to a numbered heading prints the full path, e.g.
+  // 壹、二、(三); a supplement given as @label[見] goes in front of it. Page
+  // references, ref(form: "page"), and every other reference, citations
+  // included, are passed through unchanged.
+  show ref: it => {
+    if it.form != "normal" { return it }
+    let el = it.element
+    if el == none or el.func() != heading or el.numbering == none { return it }
+    let path = heading-path(counter(heading).at(el.location()), large: large)
+    let supplement = if it.supplement == auto { none } else { it.supplement }
+    link(el.location(), [#supplement#path])
+  }
 
   // 標題顯示規則 / Heading display rules:
   //   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
