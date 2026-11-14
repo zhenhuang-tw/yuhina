@@ -139,19 +139,29 @@
 }
 
 // ============================================================
-// § 基本排版規則
-// § Base typesetting rules
+// § 可個別套用的排版規則
+// § Composable style rules
 //
-//   以 `show: common-style.with(...)` 套用。入口檔可在其後再寫
-//   set 規則覆寫（例如段落縮排），較內層的 set 規則優先。
-//   Apply with `show: common-style.with(...)`. Entry points may
-//   override afterwards with their own set rules (e.g. paragraph
-//   indent); inner set rules take precedence.
+//   每個函式都以 `show: xxx` 或 `show: xxx.with(...)` 套用，只影響其後的內容，
+//   可依需要挑選、調整順序或替換其中幾項。common-style 依下列順序全部套用。
+//   Each function is applied with `show: xxx` or `show: xxx.with(...)` and only
+//   affects the content after it, so templates can pick, reorder or replace
+//   them. common-style applies all of them in the order below.
 //
-//   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
-//            Whether to add a "Chapter N" level on top (used by large-note.typ)
+//   document-style   PDF 標題與作者 / PDF title and authors
+//   page-style       紙張、邊距、頁碼 / Paper, margins, page numbers
+//   text-style       字型、語言、CJK 粗體 / Fonts, language, CJK bold
+//   par-style        段落 / Paragraphs
+//   quote-style      區塊引用 / Block quotes
+//   list-style       編號與項目清單 / Numbered and bulleted lists
+//   figure-style     圖說 / Figure captions
+//   footnote-style   註腳 / Footnotes
+//   heading-style    標題編號與外觀 / Heading numbering and display
+//   ref-style        交互參照 / Cross-references
 // ============================================================
-#let common-style(title: "", authors: (), large: false, body) = {
+
+// PDF 中繼資料：標題與作者 / PDF metadata: title and authors
+#let document-style(title: "", authors: (), body) = {
   let author-names = normalize-authors(authors).map(a => {
     if type(a) == dictionary { a.at("name", default: "") } else { str(a) }
   })
@@ -165,31 +175,39 @@
     exiftool -Producer="國立臺北大學法律學系"
   */
 
-  // 1. 基本頁面設定 / Basic page setup
-  set page(
-    paper: "a4",
-    margin: (x: 3cm, y: 2.5cm),
-    numbering: "1",
-    number-align: center,
-  )
+  body
+}
 
-  // 2. 字體與段落設定 / Font and paragraph setup
-  set text(font: font-song, size: 12pt, lang: "zh", region: "tw")
+// 頁面：紙張、邊距、頁尾置中頁碼 / Page: paper, margins, centered page number in the footer
+#let page-style(paper: "a4", margin: (x: 3cm, y: 2.5cm), body) = {
+  set page(paper: paper, margin: margin, numbering: "1", number-align: center)
+  body
+}
 
+// 字型與語言；CJK 粗體依字型改用真粗體或 cuti 偽粗體
+// Font and language; CJK bold uses a real bold face or cuti's fake bold depending on the font
+#let text-style(font: font-song, size: 12pt, body) = {
+  set text(font: font, size: size, lang: "zh", region: "tw")
   show: show-cn-fakebold-smart
+  body
+}
 
-  set par(
-    first-line-indent: 0em, // 筆記預設不縮排；衍生模板可覆寫 / Notes default to no indent; derived templates may override
-    leading: 1.1em,
-    justify: true,
-    spacing: 1.6em,
-  )
+// 段落：筆記預設不縮排；衍生模板可傳入 first-line-indent 等參數
+// Paragraphs: notes default to no indent; derived templates may pass first-line-indent and others
+#let par-style(first-line-indent: 0em, leading: 1.1em, spacing: 1.6em, body) = {
+  set par(first-line-indent: first-line-indent, leading: leading, justify: true, spacing: spacing)
+  body
+}
 
-  // 區塊引用 / Block quote
-  show quote.where(block: true): set text(font: font-kai)
+// 區塊引用 / Block quote
+#let quote-style(font: font-kai, body) = {
+  show quote.where(block: true): set text(font: font)
+  body
+}
 
-  // 編號清單：依層級採臺灣公文常用格式 1. → (1) → A. → (A) → a. → (a)
-  // Numbered list: formats common in Taiwanese official documents by level
+// 編號清單：依層級採臺灣公文常用格式 1. → (1) → A. → (A) → a. → (a)
+// Numbered list: formats common in Taiwanese official documents by level
+#let list-style(body) = {
   set enum(
     full: true,
     numbering: (..nums) => {
@@ -199,19 +217,23 @@
     },
   )
   set list(marker: ([•], [▪], [◆]))
+  body
+}
 
-  // 圖說 / Figure caption
-  show figure.caption: set text(font: font-kai)
+// 圖說：楷體；圖片的圖說置於上方 / Figure caption: Kai; image captions go above
+#let figure-style(font: font-kai, body) = {
+  show figure.caption: set text(font: font)
   show figure.where(kind: image): set figure.caption(position: top)
+  body
+}
 
-  // ──────────────────────────────────────────────
-  // § 註腳格式設定 (文內標籤黑體 + 底部懸掛縮排)
-  // § Footnote formatting (sans-serif in-text label + hanging indent at the bottom)
-  // ──────────────────────────────────────────────
-  show footnote: set text(font: font-hei)
+// 註腳：文內標籤黑體上標；頁底懸掛縮排
+// Footnotes: sans-serif superscript label in the text; hanging indent at the bottom
+#let footnote-style(font: font-song, label-font: font-hei, body) = {
+  show footnote: set text(font: label-font)
 
   show footnote.entry: it => {
-    set text(font: font-song, weight: "regular")
+    set text(font: font, weight: "regular")
     set par(leading: 0.9em, spacing: 0.9em)
 
     let loc = it.note.location()
@@ -224,37 +246,27 @@
       grid(
         columns: (1.25em, 1fr),
         // 左欄放編號、右欄放內文 / Left: number, right: body
-        text(font: font-hei)[#super[#counter(footnote).display(at: loc)]], it.note.body,
+        text(font: label-font)[#super[#counter(footnote).display(at: loc)]], it.note.body,
       ),
     )
   }
 
-  // 3. 標題層級設定 / Heading level setup
-  show heading: set text(font: font-hei, weight: "bold")
+  body
+}
+
+// 標題：編號見 heading-number；外觀如下
+// Headings: numbering by heading-number; display as follows
+//   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
+//            Whether to add a "Chapter N" level on top (used by large-note.typ)
+//   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
+//     Level 1: centered; when large, level 1 is the chapter, one size larger, on a new page
+//   - 其餘層級：靠左 / Other levels: left-aligned
+//   - 無編號（目錄、參考文獻等）：原樣輸出 / Unnumbered (TOC, references, ...): output as-is
+#let heading-style(font: font-hei, large: false, body) = {
+  show heading: set text(font: font, weight: "bold")
 
   set heading(numbering: (..nums) => heading-number(nums.pos(), large: large))
 
-  // 交互參照：@label 指向有編號的標題時，輸出完整層級路徑，例如「壹、二、(三)」；
-  // 以 @label[見] 傳入的補充文字會接在路徑前面。頁碼參照 ref(form: "page") 與
-  // 其餘參照（含文獻引用）原樣交回。
-  // Cross-references: @label to a numbered heading prints the full path, e.g.
-  // 壹、二、(三); a supplement given as @label[見] goes in front of it. Page
-  // references, ref(form: "page"), and every other reference, citations
-  // included, are passed through unchanged.
-  show ref: it => {
-    if it.form != "normal" { return it }
-    let el = it.element
-    if el == none or el.func() != heading or el.numbering == none { return it }
-    let path = heading-path(counter(heading).at(el.location()), large: large)
-    let supplement = if it.supplement == auto { none } else { it.supplement }
-    link(el.location(), [#supplement#path])
-  }
-
-  // 標題顯示規則 / Heading display rules:
-  //   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
-  //     Level 1: centered; when large, level 1 is the chapter, one size larger, on a new page
-  //   - 其餘層級：靠左 / Other levels: left-aligned
-  //   - 無編號（目錄、參考文獻等）：原樣輸出 / Unnumbered (TOC, references, ...): output as-is
   show heading: it => {
     if it.numbering != none {
       let displayed = {
@@ -279,6 +291,54 @@
     }
   }
 
+  body
+}
+
+// 交互參照：@label 指向有編號的標題時，輸出完整層級路徑，例如「壹、二、(三)」；
+// 以 @label[見] 傳入的補充文字會接在路徑前面。頁碼參照 ref(form: "page") 與
+// 其餘參照（含文獻引用）原樣交回。large 須與 heading-style 一致。
+// Cross-references: @label to a numbered heading prints the full path, e.g.
+// 壹、二、(三); a supplement given as @label[見] goes in front of it. Page
+// references, ref(form: "page"), and every other reference, citations
+// included, are passed through unchanged. large must match heading-style.
+#let ref-style(large: false, body) = {
+  show ref: it => {
+    if it.form != "normal" { return it }
+    let el = it.element
+    if el == none or el.func() != heading or el.numbering == none { return it }
+    let path = heading-path(counter(heading).at(el.location()), large: large)
+    let supplement = if it.supplement == auto { none } else { it.supplement }
+    link(el.location(), [#supplement#path])
+  }
+  body
+}
+
+// ============================================================
+// § 基本排版規則（全部套用）
+// § Base typesetting rules (all of the above)
+//
+//   以 `show: common-style.with(...)` 套用。入口檔可在其後再寫
+//   set 規則覆寫（例如段落縮排），較內層的 set 規則優先；
+//   需要更細的控制時，改為個別套用上列函式。
+//   Apply with `show: common-style.with(...)`. Entry points may
+//   override afterwards with their own set rules (e.g. paragraph
+//   indent); inner set rules take precedence. For finer control,
+//   apply the functions above one by one instead.
+//
+//   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
+//            Whether to add a "Chapter N" level on top (used by large-note.typ)
+// ============================================================
+#let common-style(title: "", authors: (), large: false, body) = {
+  show: document-style.with(title: title, authors: authors)
+  show: page-style
+  show: text-style
+  show: par-style
+  show: quote-style
+  show: list-style
+  show: figure-style
+  show: footnote-style
+  show: heading-style.with(large: large)
+  show: ref-style.with(large: large)
   body
 }
 
