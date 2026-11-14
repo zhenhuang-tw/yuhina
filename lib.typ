@@ -1,7 +1,5 @@
 // lib.typ
-// basic-zh-typesetting：臺灣繁體中文文件的共通排版基礎。
-//   字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則。
-// basic-zh-typesetting: a shared typesetting base for Traditional Chinese
+// yuhina: a shared typesetting base for Traditional Chinese
 //   documents in Taiwan: fonts, inline style functions, title/author blocks,
 //   and composable style rules.
 //
@@ -9,9 +7,9 @@
 // Templates such as the note templates and typst-ntulj import this package, so
 // renaming or changing the parameters of existing definitions is a breaking change.
 //
-//   #import "@local/basic-zh-typesetting:0.1.0": *
+//   #import "@local/yuhina:0.1.0": *
 
-// 中文字型偽粗體 / Fake bold for Chinese fonts
+// Fake bold for Chinese fonts
 #import "@preview/cuti:0.4.0": cn-fakebold
 
 // ============================================================

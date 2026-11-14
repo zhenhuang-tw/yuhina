@@ -1,8 +1,8 @@
 [package]
-name = "basic-zh-typesetting"
+name = "yuhina"
 version = "0.1.0"
 entrypoint = "lib.typ"
 compiler = "0.14.0"
-authors = ["zhen <https://github.com/zhenhuang-tw>"]
+authors = ["Zhen Huang <https://github.com/zhenhuang-tw>"]
 description = "Shared typesetting base for Traditional Chinese documents in Taiwan"
-repository = "https://github.com/zhenhuang-tw/basic-zh-typesetting"
+repository = "https://github.com/zhenhuang-tw/yuhina"
