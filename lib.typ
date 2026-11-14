@@ -1,12 +1,15 @@
-// common.typ
-// 共用定義：字體、行內樣式函式、作者與標題區塊、基本排版規則。
-// Shared definitions: fonts, inline style functions, title/author blocks, and base typesetting rules.
+// lib.typ
+// basic-zh-typesetting：臺灣繁體中文文件的共通排版基礎。
+//   字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則。
+// basic-zh-typesetting: a shared typesetting base for Traditional Chinese
+//   documents in Taiwan: fonts, inline style functions, title/author blocks,
+//   and composable style rules.
 //
-// 本檔不是入口檔：文件請匯入 basic-note.typ 或 large-note.typ。
-// 衍生模板（例如 typst-ntulj）會直接匯入本檔，修改既有名稱或參數前請留意相容性。
-// This is not an entry point: documents should import basic-note.typ or large-note.typ.
-// Derived templates (e.g. typst-ntulj) import this file directly, so renaming or
-// changing the parameters of existing definitions is a breaking change.
+// 本套件供模板匯入，例如筆記模板與 typst-ntulj；修改既有名稱或參數屬破壞性變更。
+// Templates such as the note templates and typst-ntulj import this package, so
+// renaming or changing the parameters of existing definitions is a breaking change.
+//
+//   #import "@local/basic-zh-typesetting:0.1.0": *
 
 // 中文字型偽粗體 / Fake bold for Chinese fonts
 #import "@preview/cuti:0.4.0": cn-fakebold
