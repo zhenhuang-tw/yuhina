@@ -66,4 +66,4 @@ New-Item -ItemType Junction -Path $pkg -Target (Resolve-Path .)
 
 本套件的名稱與參數供其他模板依賴：新增功能升次版號，修改或移除既有名稱、參數升主版號。
 
-備註：本套件由 [bluemagpie](https://github.com/zhenhuang-tw/bluemagpie)（原名 typst-basic-zh）的 `common.typ` 拆分而來，保留其修改歷史。bluemagpie 已改為匯入本套件；論文模板 [typst-ntulj](https://github.com/zhenhuang-tw/typst-ntulj) 將改為匯入本套件。
+備註：本套件由 [bluemagpie](https://github.com/zhenhuang-tw/bluemagpie)的 `common.typ` 拆分而來（bluemagpie 已改為匯入本套件），保留其修改歷史。論文模板 [typst-ntulj](https://github.com/zhenhuang-tw/typst-ntulj) 將改為匯入本套件。
