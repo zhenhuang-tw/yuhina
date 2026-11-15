@@ -88,8 +88,9 @@
 // ============================================================
 
 // 行內引用 / Inline quoting. Example: #inquote[quoted text]
-#let inquote(content) = {
-  set text(font: font-kai)
+// font 可改用其他字型清單 / font may be set to another font list
+#let inquote(content, font: font-kai) = {
+  set text(font: font)
   content
 }
 // 重點強調 / Emphasis
@@ -122,18 +123,18 @@
   parts.join("、")
 }
 
-// 置中的標題區塊：主標題（含 thanks）、副標題、作者
-// Centered title block: main title (with thanks), subtitle, authors
-#let title-block(title, title-thanks: none, subtitle: none, authors: ()) = align(center)[
+// 置中的標題區塊：主標題（含 thanks）、副標題、作者；font 為標題與副標題的字型
+// Centered title block: main title (with thanks), subtitle, authors; font sets the title and subtitle font
+#let title-block(title, title-thanks: none, subtitle: none, authors: (), font: font-hei) = align(center)[
   #block(
-    text(font: font-hei, weight: 700, size: 1.75em)[
+    text(font: font, weight: 700, size: 1.75em)[
       #title#if title-thanks != none and title-thanks != "" { footnote(title-thanks) }
     ],
   )
 
   #if subtitle != none and subtitle != "" [
     #v(0.5em)
-    #block(text(font: font-hei, weight: "bold", size: 1.25em, subtitle))
+    #block(text(font: font, weight: "bold", size: 1.25em, subtitle))
   ]
 
   #v(1em)
@@ -369,17 +370,34 @@
 //
 //   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
 //            Whether to add a "Chapter N" level on top (used by large-note.typ)
+//   - fonts: 覆寫字型的 dictionary，可用的鍵為 song、hei、kai，值為字型清單；
+//            未列出的鍵使用預設。例如 fonts: (song: ("Libertinus Serif", "Noto Serif CJK TC"))。
+//            song 用於內文與註腳，hei 用於標題與註腳編號，kai 用於區塊引用與圖說。
+//            若要保留預設的降級順序，只在前面加字型：("My Font", ..font-song)。
+//            title-block 與 inquote 不經過 common-style，請另以各自的 font 參數指定。
+//            Dictionary to override fonts. Keys are song, hei and kai, values are font lists;
+//            keys that are left out keep the defaults. song sets the body text and footnotes,
+//            hei the headings and footnote labels, kai the block quotes and figure captions.
+//            To keep the default fallback order, only prepend fonts: ("My Font", ..font-song).
+//            title-block and inquote are not applied by common-style; set their own font parameter.
 // ============================================================
-#let common-style(title: "", authors: (), large: false, body) = {
+#let common-style(title: "", authors: (), large: false, fonts: (:), body) = {
+  for key in fonts.keys() {
+    assert(key in ("song", "hei", "kai"), message: "common-style: unknown key `" + key + "` in fonts; expected song, hei or kai")
+  }
+  let song = fonts.at("song", default: font-song)
+  let hei = fonts.at("hei", default: font-hei)
+  let kai = fonts.at("kai", default: font-kai)
+
   show: document-style.with(title: title, authors: authors)
   show: page-style
-  show: text-style
+  show: text-style.with(font: song)
   show: par-style
-  show: quote-style
+  show: quote-style.with(font: kai)
   show: list-style
-  show: figure-style
-  show: footnote-style
-  show: heading-style.with(large: large)
+  show: figure-style.with(font: kai)
+  show: footnote-style.with(font: song, label-font: hei)
+  show: heading-style.with(font: hei, large: large)
   show: ref-style.with(large: large)
   body
 }

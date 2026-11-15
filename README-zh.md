@@ -29,6 +29,26 @@ Windows 以外的環境通常沒有上述字型。每組字型（`font-song`、`
 - 粗體：`text-style` 以清單中第一個 CJK 字型判斷是否使用 [cuti](https://typst.app/universe/package/cuti) 偽粗體，而不是實際使用的字型。預設清單的第一個 CJK 字型是新細明體等，沒有粗體，因此降級到有真粗體的 Noto 等字型時，仍會再疊加偽粗體，粗體會略粗。需要精確控制時，請以 `text-style.with(font: (...))` 自訂字型清單，把要用的 CJK 字型排在第一個 CJK 位置。
 - 降級字型清單依各平臺的常見家族名稱整理，並非每個平臺都逐一實測。若你的環境字型名稱不同，請以 `text-style.with(font: (...))` 自訂清單，或在 repo 開 issue。
 
+### 覆寫字型
+
+`common-style` 的 `fonts` 參數可覆寫字型。鍵為 `song`（內文與註腳）、`hei`（標題與註腳編號）、`kai`（區塊引用與圖說），值為字型清單；沒列出的鍵維持預設。寫了其他鍵會直接報錯，以免打錯字而沒有生效。
+
+```typ
+// 完全自訂：只使用指定的字型
+#show: common-style.with(
+  fonts: (song: ("Libertinus Serif", "Noto Serif CJK TC")),
+)
+
+// 保留預設的降級順序，只在最前面加上自己的字型
+#show: common-style.with(
+  fonts: (hei: ("My Sans", ..font-hei)),
+)
+```
+
+不經過 `common-style` 的 `title-block` 與 `inquote` 另以 `font` 參數指定，例如 `#title-block("標題", font: font-song)`、`#inquote(font: font-song)[文字]`。個別套用的樣式函式（`text-style`、`heading-style` 等）本來就有 `font` 參數。
+
+自訂完整清單時，請把要用的 CJK 字型排在清單中第一個 CJK 位置，因為粗體判斷（見上）是看它。
+
 ## 安裝為 local package
 
 尚未發布到 Typst Universe，請以本機套件的方式使用。Typst 會在 `%APPDATA%\typst\packages\local\<名稱>\<版本>` 尋找本機套件；建立一個指向本 repo 的目錄連結（junction），修改 repo 後不必重新複製：
