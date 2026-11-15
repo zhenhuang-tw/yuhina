@@ -7,7 +7,7 @@ A shared typesetting base for Traditional Chinese documents in Taiwan, designed 
 
 The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/Taiwan_yuhina), a bird species endemic to Taiwan.
 
-臺灣繁體中文文件的共通排版基礎，供 [Typst](https://typst.app/) 模板匯入：字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則（頁面、段落、註腳、「壹、一、(一)」標題編號、「見壹、二、(三)」交互參照等）。
+臺灣繁體中文文件的共通排版基礎，供 [Typst](https://typst.app/) 模板匯入：字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則（頁面、段落、註腳、「壹、一、(一)」六層標題編號（第六層為「①」）、「見壹、二、(三)」交互參照等）。
 
 本套件的名稱 `yuhina` 得名於臺灣特有種[冠羽鳳眉](https://zh.wikipedia.org/zh-tw/褐头凤鹛)（Taiwan yuhina）。
 
