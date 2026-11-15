@@ -102,7 +102,7 @@ OFL 1.1 允許在文件中使用字型並散布產出的 PDF，但若要再散�
 )
 ```
 
-不經過 `common-style` 的 `title-block` 與 `inquote` 另以 `font` 參數指定，例如 `#title-block("標題", font: font-song)`、`#inquote(font: font-song)[文字]`。個別套用的樣式函式（`text-style`、`heading-style` 等）本來就有 `font` 參數。
+不經過 `common-style` 的 `title-block` 與 `inquote` 另以 `font` 參數指定，例如 `#title-block("標題", font: font-song)`、`#inquote(font: font-song)[文字]`。`title-block` 預設為黑體粗體，另有 `weight` 參數可調整粗細，例如楷體不加粗：`#title-block("標題", font: font-kai, weight: "regular")`。個別套用的樣式函式（`text-style`、`heading-style` 等）本來就有 `font` 參數。
 
 自訂完整清單時，請把要用的 CJK 字型排在清單中第一個 CJK 位置，因為粗體判斷（見上）是看它。
 

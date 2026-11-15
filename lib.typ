@@ -129,17 +129,26 @@
   parts.join("、")
 }
 
-// 置中的標題區塊：主標題（含 thanks）、副標題、作者；font 為標題與副標題的字型
-#let title-block(title, title-thanks: none, subtitle: none, authors: (), font: font-hei) = align(center)[
+// 置中的標題區塊：主標題（含 thanks）、副標題、作者；
+// font、weight 為標題與副標題的字型與粗細（預設黑體粗體），
+// 例如楷體不加粗：`font: font-kai, weight: "regular"`。
+#let title-block(
+  title,
+  title-thanks: none,
+  subtitle: none,
+  authors: (),
+  font: font-hei,
+  weight: "bold",
+) = align(center)[
   #block(
-    text(font: font, weight: 700, size: 1.75em)[
+    text(font: font, weight: weight, size: 1.75em)[
       #title#if title-thanks != none and title-thanks != "" { footnote(title-thanks) }
     ],
   )
 
   #if subtitle != none and subtitle != "" [
     #v(0.5em)
-    #block(text(font: font, weight: "bold", size: 1.25em, subtitle))
+    #block(text(font: font, weight: weight, size: 1.25em, subtitle))
   ]
 
   #v(1em)
