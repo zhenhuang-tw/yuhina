@@ -15,13 +15,14 @@
 // 各堆疊內「拉丁字型在前、CJK 字型在後」，避免 CJK 字型自帶的拉丁字形蓋過較合適的拉丁字型。
 //
 // 降級字型 / Fallback fonts
-//   拉丁（襯線）/ Latin serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
-//   拉丁（無襯線）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
+//   拉丁 / Latin: 統一使用 Libertinus 家族 / the Libertinus family throughout
+//     襯線 serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
+//     無襯線 sans: Libertinus Sans（Typst 未內建，需自行安裝 / not bundled, install it separately）
 //   CJK 宋/Song: Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
 //   CJK 黑/Hei:  Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
 //   CJK 楷/Kai:  TW-MOE-Std-Kai（教育部標準楷書）、TW-Kai（全字庫正楷體）、LXGW WenKai TC；皆無時改用宋體降級字型
 #let fallback-latin-serif = ("Libertinus Serif",)
-#let fallback-latin-sans = ("Liberation Sans", "Arimo")
+#let fallback-latin-sans = ("Libertinus Sans",)
 #let fallback-cjk-serif = ("Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
 #let fallback-cjk-sans = ("Noto Sans CJK TC", "Source Han Sans TC", "Noto Sans TC")
 #let fallback-cjk-kai = ("TW-MOE-Std-Kai", "TW-Kai", "LXGW WenKai TC")
