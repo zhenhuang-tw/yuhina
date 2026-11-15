@@ -6,3 +6,4 @@ compiler = "0.14.0"
 authors = ["Zhen Huang <https://github.com/zhenhuang-tw>"]
 description = "Shared typesetting base for Traditional Chinese documents in Taiwan"
 repository = "https://github.com/zhenhuang-tw/yuhina"
+license = "MIT"
