@@ -158,13 +158,13 @@
 // 單一標題的編號，如「(三) 」；n 為各層計數，例如 (1, 2, 3)。
 // 六層依序為「壹、一、(一) 1.(1) ①」，各層數字超過十時依序進位，如「拾壹、」「十一、」；
 // 超過六層者無編號（回傳 none）。
-// large 為 true 時，於現有層級上方多加一層「章」。
+// large 為 true 時，於現有層級上方多加一層「章」，編號為「Ch. 1 」（阿拉伯數字）。
 #let heading-number(n, large: false) = {
   let level-offset = if large { 1 } else { 0 }
   let level = n.len() - level-offset
   let val = n.last()
   if large and n.len() == 1 {
-    numbering("第一章 ", val)
+    "Ch. " + numbering("1", val) + " "
   } else if level == 1 {
     ch-big-number(val) + "、"
   } else if level == 2 {
@@ -294,7 +294,7 @@
 }
 
 // 標題：編號見 heading-number；外觀如下
-//   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
+//   - large: 是否在最上層多加一層「Ch. 1」（由 large-note.typ 使用）
 //   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
 //   - 其餘層級：靠左
 //   - 無編號（目錄、參考文獻等）：原樣輸出
@@ -352,7 +352,7 @@
 //   set 規則覆寫（例如段落縮排），較內層的 set 規則優先；
 //   需要更細的控制時，改為個別套用上列函式。
 //
-//   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
+//   - large: 是否在最上層多加一層「Ch. 1」（由 large-note.typ 使用）
 //   - fonts: 覆寫字型的 dictionary，可用的鍵為 song、hei、kai，值為字型清單；
 //            未列出的鍵使用預設。例如 fonts: (song: ("Libertinus Serif", "Noto Serif CJK TC"))。
 //            song 用於內文與註腳，hei 用於標題與註腳編號，kai 用於區塊引用與圖說。
