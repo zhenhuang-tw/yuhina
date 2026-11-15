@@ -22,19 +22,19 @@ The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/T
 
 ## 字型降級
 
-Windows 以外的環境通常沒有上述字型。每組字型（`font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong`）都是一份依優先順序排列的清單，Typst 會逐字形挑選第一個已安裝且含有該字形的字型，找不到的字型直接略過，不會報錯。因此在缺字型的環境，會依下表順序降級：
+Linux 等非 Windows 環境通常沒有上述字型。本套件不支援 macOS，因此降級清單不含 macOS 專有字型（如 Songti TC、PingFang TC）。每組字型（`font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong`）都是一份依優先順序排列的清單，Typst 會逐字形挑選第一個已安裝且含有該字形的字型，找不到的字型直接略過，不會報錯。因此在缺字型的環境，會依下表順序降級：
 
-| 用途               | 優先（Windows／Office）                    | 降級字型                                                                                         |
-| ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| 內文（宋體）       | Times New Roman、新細明體（PMingLiU）      | Libertinus Serif（Typst 內建）；Songti TC、Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC |
-| 標題（黑體）       | Arial、Microsoft JhengHei UI               | Liberation Sans、Arimo；PingFang TC、Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC          |
-| 引用、圖說（楷體） | Times New Roman、標楷體（DFKai-SB）        | 拉丁同宋體；Kaiti TC、BiauKai、LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型                    |
-| 圓體、仿宋         | TaiwanPearl、Zhuque Fangsong（需自行安裝） | 圓體同黑體降級字型；仿宋同宋體降級字型                                                           |
+| 用途               | 優先（Windows／Office）                    | 降級字型                                                                                                     |
+| ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| 內文（宋體）       | Times New Roman、新細明體（PMingLiU）      | Libertinus Serif（Typst 內建）；Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC                        |
+| 標題（黑體）       | Arial、Microsoft JhengHei UI               | Libertinus Sans；Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC                                          |
+| 引用、圖說（楷體） | Times New Roman、標楷體（DFKai-SB）        | 拉丁同宋體；TW-MOE-Std-Kai（教育部標準楷書）、TW-Kai（全字庫正楷體）、LXGW WenKai TC；皆無時改用宋體降級字型 |
+| 圓體、仿宋         | TaiwanPearl、Zhuque Fangsong（需自行安裝） | 圓體同黑體降級字型；仿宋同宋體降級字型                                                                       |
 
 注意事項：
 
-- 降級字型需自行安裝。建議安裝 Noto Serif／Sans CJK TC 與 Liberation Sans，即可涵蓋大部分環境；拉丁宋體的降級字型 Libertinus Serif 由 Typst 內建，不必另外安裝。**請安裝「TC」（繁體中文）版本**：若只有 JP、SC 等其他地區版本，Typst 可能改用它們，同一個漢字的字形會與臺灣用字不同。
-- 清單中的拉丁字型排在 CJK 字型之前，所以拉丁字母與數字由 Libertinus Serif（宋體）、Liberation Sans 或 Arimo（黑體）等字型呈現，漢字與全形標點由 CJK 字型呈現。
+- 降級字型需自行安裝。建議安裝 Noto Serif／Sans CJK TC 與 [Libertinus](https://github.com/alerque/libertinus) 家族的 Libertinus Sans；拉丁宋體的降級字型 Libertinus Serif 由 Typst 內建，不必另外安裝。**請安裝「TC」（繁體中文）版本**：若只有 JP、SC 等其他地區版本，Typst 可能改用它們，同一個漢字的字形會與臺灣用字不同。
+- 清單中的拉丁字型排在 CJK 字型之前，所以拉丁字母與數字由 Libertinus Serif（宋體）或 Libertinus Sans（黑體）呈現，漢字與全形標點由 CJK 字型呈現。未安裝 Libertinus Sans 時，黑體的拉丁字母與數字改由 CJK 黑體字型自帶的拉丁字形呈現。Libertinus Sans 與 Arial 的字寬不同，因此降級後的換行與頁數可能與 Windows 上的結果有差異。
 - 粗體：`text-style` 以清單中第一個 CJK 字型判斷是否使用 [cuti](https://typst.app/universe/package/cuti) 偽粗體，而不是實際使用的字型。預設清單的第一個 CJK 字型是新細明體等，沒有粗體，因此降級到有真粗體的 Noto 等字型時，仍會再疊加偽粗體，粗體會略粗。需要精確控制時，請以 `text-style.with(font: (...))` 自訂字型清單，把要用的 CJK 字型排在第一個 CJK 位置。
 - 降級字型清單依各平臺的常見家族名稱整理，並非每個平臺都逐一實測。若您的環境字型名稱不同，請以 `text-style.with(font: (...))` 自訂清單，或在 repo 開 issue。
 
