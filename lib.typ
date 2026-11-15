@@ -17,14 +17,14 @@
 // 降級字型 / Fallback fonts
 //   拉丁（襯線）/ Latin serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
 //   拉丁（無襯線）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
-//   CJK 宋/Song: Songti TC（macOS）、Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
-//   CJK 黑/Hei:  PingFang TC（macOS）、Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
-//   CJK 楷/Kai:  Kaiti TC、BiauKai（macOS）、LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型
+//   CJK 宋/Song: Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
+//   CJK 黑/Hei:  Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
+//   CJK 楷/Kai:  LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型
 #let fallback-latin-serif = ("Libertinus Serif",)
 #let fallback-latin-sans = ("Liberation Sans", "Arimo")
-#let fallback-cjk-serif = ("Songti TC", "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
-#let fallback-cjk-sans = ("PingFang TC", "Noto Sans CJK TC", "Source Han Sans TC", "Noto Sans TC")
-#let fallback-cjk-kai = ("Kaiti TC", "BiauKai", "LXGW WenKai TC", "TW-Kai")
+#let fallback-cjk-serif = ("Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
+#let fallback-cjk-sans = ("Noto Sans CJK TC", "Source Han Sans TC", "Noto Sans TC")
+#let fallback-cjk-kai = ("LXGW WenKai TC", "TW-Kai")
 
 #let font-song = ("Times New Roman", "PMingLiU", ..fallback-latin-serif, ..fallback-cjk-serif)
 #let font-hei = ("Arial", "Microsoft JhengHei UI", ..fallback-latin-sans, ..fallback-cjk-sans)
@@ -44,7 +44,6 @@
 #let cjk-real-bold-fonts = (
   "microsoft jhenghei",
   "microsoft jhenghei ui",
-  "pingfang tc",
   "noto sans cjk tc",
   "noto serif cjk tc",
   "noto sans tc",
