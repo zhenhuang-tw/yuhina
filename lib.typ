@@ -124,6 +124,7 @@
 #let ch-big-numbers = ("壹", "貳", "參", "肆", "伍", "陸", "柒", "捌", "玖", "拾")
 
 // 單一標題的編號，如「(三) 」；n 為各層計數，例如 (1, 2, 3)。
+// 六層依序為「壹、一、(一) 1.(1) ①」；超過六層者無編號（回傳 none）。
 // large 為 true 時，於現有層級上方多加一層「章」。
 #let heading-number(n, large: false) = {
   let level-offset = if large { 1 } else { 0 }
@@ -141,6 +142,8 @@
     numbering("1.", ..n.slice(3 + level-offset))
   } else if level == 5 {
     numbering("(1) ", ..n.slice(4 + level-offset))
+  } else if level == 6 {
+    numbering("①", ..n.slice(5 + level-offset))
   }
 }
 
