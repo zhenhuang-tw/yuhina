@@ -22,7 +22,7 @@ The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/T
 
 ## 字型降級
 
-Linux 等非 Windows 環境通常沒有上述字型。本套件不支援 macOS，因此降級清單不含 macOS 專有字型（如 Songti TC、PingFang TC）。每組字型（`font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong`）都是一份依優先順序排列的清單，Typst 會逐字形挑選第一個已安裝且含有該字形的字型，找不到的字型直接略過，不會報錯。因此在缺字型的環境，會依下表順序降級：
+Linux 等非 Windows 環境通常沒有上述字型。本套件不支援 macOS，因此降級清單不含 macOS 專有字型（如 Songti TC、PingFang TC）。每組字型（`font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong`）都是一份依優先順序排列的清單，Typst 會逐字形挑選第一個已安裝且含有該字形的字型，找不到的字型會略過，但每個找不到的家族都會顯示一則 `unknown font family` 警告（不影響輸出；避免警告的方法見[編譯指令](#編譯指令)）。因此在缺字型的環境，會依下表順序降級：
 
 | 用途               | 優先（Windows／Office）                    | 降級字型                                                                                                     |
 | ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
@@ -37,6 +37,43 @@ Linux 等非 Windows 環境通常沒有上述字型。本套件不支援 macOS�
 - 清單中的拉丁字型排在 CJK 字型之前，所以拉丁字母與數字由 Libertinus Serif（宋體）或 Libertinus Sans（黑體）呈現，漢字與全形標點由 CJK 字型呈現。未安裝 Libertinus Sans 時，黑體的拉丁字母與數字改由 CJK 黑體字型自帶的拉丁字形呈現。Libertinus Sans 與 Arial 的字寬不同，因此降級後的換行與頁數可能與 Windows 上的結果有差異。
 - 粗體：`text-style` 以清單中第一個 CJK 字型判斷是否使用 [cuti](https://typst.app/universe/package/cuti) 偽粗體，而不是實際使用的字型。預設清單的第一個 CJK 字型是新細明體等，沒有粗體，因此降級到有真粗體的 Noto 等字型時，仍會再疊加偽粗體，粗體會略粗。需要精確控制時，請以 `text-style.with(font: (...))` 自訂字型清單，把要用的 CJK 字型排在第一個 CJK 位置。
 - 降級字型清單依各平臺的常見家族名稱整理，並非每個平臺都逐一實測。若您的環境字型名稱不同，請以 `text-style.with(font: (...))` 自訂清單，或在 repo 開 issue。
+
+### 編譯指令
+
+Typst 沒有關閉 `unknown font family` 警告的設定，文件內也無法查詢已安裝字型，所以只能由使用者在編譯時告知環境（做法參考 [Typst 論壇的討論](https://forum.typst.app/t/is-it-possible-to-suppress-the-warning-about-noto-cjk-source-han-duality/2207)）。請依作業系統加上 `--input`：
+
+```powershell
+# Windows
+typst c file.typ --input USE_WIN=1
+typst w file.typ --input USE_WIN=1
+```
+
+```sh
+# Linux
+typst c file.typ --input USE_LINUX=1
+typst w file.typ --input USE_LINUX=1
+```
+
+旗標的值可為 `1` 或 `true`。兩者皆不設定時，保留上表的完整清單（缺字型時會有警告）；同時設定會報錯。各模式實際使用的字型如下：
+
+| 用途               | `USE_WIN=1`                                | `USE_LINUX=1`                                               |
+| ------------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| 內文（宋體）       | Times New Roman、新細明體、Libertinus Serif | Libertinus Serif、Noto Serif CJK TC                         |
+| 標題（黑體）       | Arial、Microsoft JhengHei UI               | Libertinus Sans、Noto Sans CJK TC                           |
+| 引用、圖說（楷體） | Times New Roman、標楷體、Libertinus Serif  | Libertinus Serif、TW-MOE-Std-Kai、Noto Serif CJK TC         |
+| 圓體、仿宋         | 首選字型（需自行安裝）加上同黑體、宋體      | 首選字型（需自行安裝）加上同黑體、宋體                      |
+
+Libertinus Serif 由 Typst 內建，不會產生警告，所以兩種模式都保留。這些設定對所有匯入 yuhina 的模板（如 flamegold、bluemagpie）一併生效。
+
+注意：
+
+- 不會自動偵測作業系統，須自己加上旗標。在 Windows 上用 `USE_LINUX`，或在 Linux 上用 `USE_WIN`，都會因缺字型而沒有可用的降級。本套件不支援 macOS，沒有對應的旗標。
+- `USE_LINUX=1` 要求您已安裝 Libertinus Sans、Noto Serif CJK TC、Noto Sans CJK TC 與 TW-MOE-Std-Kai（建議安裝「TC」版本，見上）；缺少的字型仍會警告，也不會再改用其他降級字型。若您安裝的是 Source Han 或 TW-Kai 等同類字型，請不要加旗標，或以 `common-style` 的 `fonts` 參數自訂清單。
+- 兩種模式都少了字型層級的補字：例如新細明體缺字時，不會再改用 Noto 補字。Typst 另有不依清單的全域補字機制，但我們沒有驗證罕用字的結果，請自行確認。
+- 圓體與仿宋的首選字型（TaiwanPearl、Zhuque Fangsong）本來就需要自行安裝，沒安裝而使用 `font-yuan`、`font-fsong` 時仍會警告。
+- 以 `common-style` 的 `fonts` 參數或個別樣式函式的 `font` 參數自訂的清單不受影響。
+- tinymist 等編輯器的即時預覽需另外在其設定中傳入同一個 `--input`，否則預覽仍會顯示警告。
+- Typst web app 不在此處理；其警告可在介面中手動關閉。
 
 ### 選用字型：圓體與仿宋
 
