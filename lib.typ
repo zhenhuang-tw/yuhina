@@ -16,17 +16,58 @@
 // § 字體定義（方便未來抽換特定字型）
 // § Font definitions (makes it easy to swap specific fonts later)
 // ============================================================
-#let font-song = ("Times New Roman", "PMingLiU")
-#let font-hei = ("Arial", "Microsoft JhengHei UI")
-#let font-kai = ("Times New Roman", "DFKai-SB")
-#let font-yuan = ("TaiwanPearl", "Arial", "Microsoft JhengHei UI") // Source: https://github.com/max32002/TaiwanPearl
-#let font-fsong = ("Zhuque Fangsong (technical preview)", "Times New Roman", "PMingLiU") // Source: https://github.com/TrionesType/zhuque
+// 字型堆疊的順序即優先順序：先列 Windows／Office 字型（維持原本外觀），
+// 再依序接上拉丁與 CJK 的降級字型。Typst 會逐字形挑選第一個含有該字形的
+// 已安裝字型，找不到的字型家族直接略過，所以缺字型時不會報錯，只會改用後面的字型。
+// 各堆疊內「拉丁字型在前、CJK 字型在後」，避免 CJK 字型自帶的拉丁字形蓋過較合適的拉丁字型。
+// The order of a font stack is its priority: Windows/Office fonts come first (keeping the
+// original look), followed by Latin and then CJK fallbacks. Typst picks, glyph by glyph, the
+// first installed family that has the glyph, and silently skips missing families, so a missing
+// font does not cause an error; later fonts are used instead. In each stack, Latin fonts
+// come before CJK fonts so that the Latin glyphs bundled in a CJK font do not override a
+// better Latin font.
+//
+// 降級字型 / Fallback fonts
+//   拉丁（宋）/ Latin serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
+//   拉丁（黑）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
+//   CJK 宋/Song: Songti TC（macOS）、Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
+//   CJK 黑/Hei:  PingFang TC（macOS）、Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
+//   CJK 楷/Kai:  Kaiti TC、BiauKai（macOS）、LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型
+//                if none is installed, the Song fallbacks are used
+#let fallback-latin-serif = ("Libertinus Serif",)
+#let fallback-latin-sans = ("Liberation Sans", "Arimo")
+#let fallback-cjk-serif = ("Songti TC", "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
+#let fallback-cjk-sans = ("PingFang TC", "Noto Sans CJK TC", "Source Han Sans TC", "Noto Sans TC")
+#let fallback-cjk-kai = ("Kaiti TC", "BiauKai", "LXGW WenKai TC", "TW-Kai")
+
+#let font-song = ("Times New Roman", "PMingLiU", ..fallback-latin-serif, ..fallback-cjk-serif)
+#let font-hei = ("Arial", "Microsoft JhengHei UI", ..fallback-latin-sans, ..fallback-cjk-sans)
+#let font-kai = (
+  ("Times New Roman", "DFKai-SB") + fallback-latin-serif + fallback-cjk-kai + fallback-cjk-serif
+)
+#let font-yuan = ("TaiwanPearl", "Arial", "Microsoft JhengHei UI", ..fallback-latin-sans, ..fallback-cjk-sans) // Source: https://github.com/max32002/TaiwanPearl
+#let font-fsong = (
+  ("Zhuque Fangsong (technical preview)", "Times New Roman", "PMingLiU")
+    + fallback-latin-serif
+    + fallback-cjk-serif
+) // Source: https://github.com/TrionesType/zhuque
 
 // Latin-only fonts, skipped when finding the font that sets CJK glyphs
-#let latin-only-fonts = ("times new roman", "arial")
+#let latin-only-fonts = (("Times New Roman", "Arial") + fallback-latin-serif + fallback-latin-sans).map(lower)
 
 // CJK fonts that ship a real bold face; fake bold is skipped for them
-#let cjk-real-bold-fonts = ("microsoft jhenghei", "microsoft jhenghei ui")
+// (the check looks at the first CJK family in the font list, not at the font actually used)
+#let cjk-real-bold-fonts = (
+  "microsoft jhenghei",
+  "microsoft jhenghei ui",
+  "pingfang tc",
+  "noto sans cjk tc",
+  "noto serif cjk tc",
+  "noto sans tc",
+  "noto serif tc",
+  "source han sans tc",
+  "source han serif tc",
+)
 
 // Apply fake bold only when the CJK font lacks a real bold face; otherwise use the real one
 #let show-cn-fakebold-smart(body) = {
