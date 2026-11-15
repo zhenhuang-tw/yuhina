@@ -1,6 +1,11 @@
 # yuhina
 
-A shared typesetting base for Traditional Chinese documents in Taiwan, for [Typst](https://typst.app/) templates to import: fonts, inline style functions, title and author blocks, and composable style rules for pages, paragraphs, footnotes, 壹、一、(一) heading numbering and cross-references.
+A shared typesetting base for Traditional Chinese documents in Taiwan, designed for [Typst](https://typst.app/) templates to import. Out of the box it favors:
+
+1. The Traditional Chinese fonts DFKai-SB and PMingLiU bundled with Windows — the most widely used operating system in Taiwan — while also offering automatic fallback to open-source fonts for other environments.
+2. Headings default to the Traditional Chinese numbering convention common in Taiwanese word processing, such as 壹、一、(一).
+
+The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/Taiwan_yuhina), a bird species endemic to Taiwan.
 
 臺灣繁體中文文件的共通排版基礎，供 [Typst](https://typst.app/) 模板匯入：字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則（頁面、段落、註腳、「壹、一、(一)」標題編號、「見壹、二、(三)」交互參照等）。
 
