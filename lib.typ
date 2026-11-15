@@ -1,39 +1,25 @@
 // lib.typ
-// yuhina: a shared typesetting base for Traditional Chinese
-//   documents in Taiwan: fonts, inline style functions, title/author blocks,
-//   and composable style rules.
-//
-// 本套件供模板匯入，例如筆記模板與 typst-ntulj；修改既有名稱或參數屬破壞性變更。
-// Templates such as the note templates and typst-ntulj import this package, so
-// renaming or changing the parameters of existing definitions is a breaking change.
-//
-//   #import "@local/yuhina:0.1.0": *
+// yuhina: a shared typesetting base for zh-Hant-TW docs
+// 本套件已有其他模板匯入，倘修改既有名稱或參數，極可能構成破壞性變更
+// 上架 Typst Universe 前之使用方式為 `#import "@local/yuhina:0.1.0": *`
 
 // Fake bold for Chinese fonts
 #import "@preview/cuti:0.4.0": cn-fakebold
 
 // ============================================================
 // § 字體定義（方便未來抽換特定字型）
-// § Font definitions (makes it easy to swap specific fonts later)
 // ============================================================
 // 字型堆疊的順序即優先順序：先列 Windows／Office 字型（維持原本外觀），
 // 再依序接上拉丁與 CJK 的降級字型。Typst 會逐字形挑選第一個含有該字形的
 // 已安裝字型，找不到的字型家族直接略過，所以缺字型時不會報錯，只會改用後面的字型。
 // 各堆疊內「拉丁字型在前、CJK 字型在後」，避免 CJK 字型自帶的拉丁字形蓋過較合適的拉丁字型。
-// The order of a font stack is its priority: Windows/Office fonts come first (keeping the
-// original look), followed by Latin and then CJK fallbacks. Typst picks, glyph by glyph, the
-// first installed family that has the glyph, and silently skips missing families, so a missing
-// font does not cause an error; later fonts are used instead. In each stack, Latin fonts
-// come before CJK fonts so that the Latin glyphs bundled in a CJK font do not override a
-// better Latin font.
 //
 // 降級字型 / Fallback fonts
-//   拉丁（宋）/ Latin serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
-//   拉丁（黑）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
+//   拉丁（襯線）/ Latin serif: Libertinus Serif（Typst 內建，所有環境皆可用 / bundled with Typst, always available）
+//   拉丁（無襯線）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
 //   CJK 宋/Song: Songti TC（macOS）、Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
 //   CJK 黑/Hei:  PingFang TC（macOS）、Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
 //   CJK 楷/Kai:  Kaiti TC、BiauKai（macOS）、LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型
-//                if none is installed, the Song fallbacks are used
 #let fallback-latin-serif = ("Libertinus Serif",)
 #let fallback-latin-sans = ("Liberation Sans", "Arimo")
 #let fallback-cjk-serif = ("Songti TC", "Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
@@ -47,9 +33,7 @@
 )
 #let font-yuan = ("TaiwanPearl", "Arial", "Microsoft JhengHei UI", ..fallback-latin-sans, ..fallback-cjk-sans) // Source: https://github.com/max32002/TaiwanPearl
 #let font-fsong = (
-  ("Zhuque Fangsong (technical preview)", "Times New Roman", "PMingLiU")
-    + fallback-latin-serif
-    + fallback-cjk-serif
+  ("Zhuque Fangsong (technical preview)", "Times New Roman", "PMingLiU") + fallback-latin-serif + fallback-cjk-serif
 ) // Source: https://github.com/TrionesType/zhuque
 
 // Latin-only fonts, skipped when finding the font that sets CJK glyphs
@@ -81,19 +65,15 @@
 
 // ============================================================
 // § 行內樣式函式（筆記與論文共用）
-// § Inline style functions (shared by notes and papers)
-//
-//   僅筆記使用的樣式（very-keyword、hypo、thought、rightNote）定義於 basic-note.typ。
-//   Note-only styles (very-keyword, hypo, thought, rightNote) live in basic-note.typ.
 // ============================================================
 
-// 行內引用 / Inline quoting. Example: #inquote[quoted text]
-// font 可改用其他字型清單 / font may be set to another font list
+// 行內引用 / Example: #inquote[quoted text]
+// 可填寫 font 參數以使用其他字型清單
 #let inquote(content, font: font-kai) = {
   set text(font: font)
   content
 }
-// 重點強調 / Emphasis
+// 重點強調(單純加粗)
 #let keyword(content) = {
   set text(weight: "bold")
   content
@@ -101,15 +81,12 @@
 
 // ============================================================
 // § 作者與標題區塊
-// § Authors and title block
 // ============================================================
 
-// 正規化 authors 為陣列（相容純字串、單一 dict、陣列三種傳入方式）
-// Normalize authors into an array (accepts a plain string, a single dict, or an array)
+// 正規化 authors 為陣列（相容三種傳入方式：純字串、單一 dict、陣列）
 #let normalize-authors(authors) = if type(authors) == array { authors } else { (authors,) }
 
 // 渲染作者列表；支援純字串或 dict (name, thanks)，thanks 以腳註呈現
-// Render the author list; supports a plain string or a dict (name, thanks); thanks becomes a footnote
 #let render-authors(auths) = {
   let parts = auths.map(a => {
     if type(a) == dictionary {
@@ -124,7 +101,6 @@
 }
 
 // 置中的標題區塊：主標題（含 thanks）、副標題、作者；font 為標題與副標題的字型
-// Centered title block: main title (with thanks), subtitle, authors; font sets the title and subtitle font
 #let title-block(title, title-thanks: none, subtitle: none, authors: (), font: font-hei) = align(center)[
   #block(
     text(font: font, weight: 700, size: 1.75em)[
@@ -144,14 +120,11 @@
 
 // ============================================================
 // § 標題編號
-// § Heading numbering
 // ============================================================
 #let ch-big-numbers = ("壹", "貳", "參", "肆", "伍", "陸", "柒", "捌", "玖", "拾")
 
 // 單一標題的編號，如「(三) 」；n 為各層計數，例如 (1, 2, 3)。
 // large 為 true 時，於現有層級上方多加一層「章」。
-// The number of one heading, e.g. "(三) "; n holds the count at each level, e.g. (1, 2, 3).
-// When large is true, an extra "chapter" level is added on top.
 #let heading-number(n, large: false) = {
   let level-offset = if large { 1 } else { 0 }
   let level = n.len() - level-offset
@@ -172,10 +145,7 @@
 }
 
 // 交互參照用的完整路徑，如 (1, 2, 3) →「壹、二、(三)」、(1, 2) →「壹、二」。
-// 各層編號去除空白後相連，並去掉結尾的「、」或「.」，以便後接文字或標點。
-// The full path used in cross-references, e.g. (1, 2, 3) -> 壹、二、(三), (1, 2) -> 壹、二.
-// Level numbers are joined without spaces, and a trailing 、 or . is dropped so
-// that text or punctuation can follow.
+// 各層編號去除空白後相連，並去掉結尾最後一個的「、」或「.」。
 #let heading-path(n, large: false) = {
   let parts = range(1, n.len() + 1).map(i => heading-number(n.slice(0, i), large: large))
   parts.filter(p => p != none).map(p => p.trim()).join().trim(regex("[、.]"), at: end)
@@ -183,13 +153,10 @@
 
 // ============================================================
 // § 可個別套用的排版規則
-// § Composable style rules
 //
 //   每個函式都以 `show: xxx` 或 `show: xxx.with(...)` 套用，只影響其後的內容，
-//   可依需要挑選、調整順序或替換其中幾項。common-style 依下列順序全部套用。
-//   Each function is applied with `show: xxx` or `show: xxx.with(...)` and only
-//   affects the content after it, so templates can pick, reorder or replace
-//   them. common-style applies all of them in the order below.
+//   可依需要挑選、調整順序或替換其中幾項。
+//   common-style 則依下列順序全部套用。
 //
 //   document-style   PDF 標題與作者 / PDF title and authors
 //   page-style       紙張、邊距、頁碼 / Paper, margins, page numbers
@@ -203,7 +170,7 @@
 //   ref-style        交互參照 / Cross-references
 // ============================================================
 
-// PDF 中繼資料：標題與作者 / PDF metadata: title and authors
+// PDF 中繼資料：標題與作者
 #let document-style(title: "", authors: (), body) = {
   let author-names = normalize-authors(authors).map(a => {
     if type(a) == dictionary { a.at("name", default: "") } else { str(a) }
@@ -212,23 +179,20 @@
 
   /*
     PDF 後處理指令:
-    PDF post-processing command:
-    編譯後若需修改 PDF 製作者資訊，請於終端機 (Windows PowerShell) 執行：
-    After compiling, to modify the PDF producer info, run this in a terminal (Windows PowerShell):
-    exiftool -Producer="國立臺北大學法律學系"
+    編譯後若需修改 PDF 製作者資訊，請於 PowerShell 執行：
+    `exiftool -Producer="國立臺北大學法律學院115-1公法讀書會"`
   */
 
   body
 }
 
-// 頁面：紙張、邊距、頁尾置中頁碼 / Page: paper, margins, centered page number in the footer
+// 頁面：紙張、邊距、頁尾置中頁碼
 #let page-style(paper: "a4", margin: (x: 3cm, y: 2.5cm), body) = {
   set page(paper: paper, margin: margin, numbering: "1", number-align: center)
   body
 }
 
 // 字型與語言；CJK 粗體依字型改用真粗體或 cuti 偽粗體
-// Font and language; CJK bold uses a real bold face or cuti's fake bold depending on the font
 #let text-style(font: font-song, size: 12pt, body) = {
   set text(font: font, size: size, lang: "zh", region: "tw")
   show: show-cn-fakebold-smart
@@ -236,20 +200,18 @@
 }
 
 // 段落：筆記預設不縮排；衍生模板可傳入 first-line-indent 等參數
-// Paragraphs: notes default to no indent; derived templates may pass first-line-indent and others
 #let par-style(first-line-indent: 0em, leading: 1.1em, spacing: 1.6em, body) = {
   set par(first-line-indent: first-line-indent, leading: leading, justify: true, spacing: spacing)
   body
 }
 
-// 區塊引用 / Block quote
+// 區塊引用
 #let quote-style(font: font-kai, body) = {
   show quote.where(block: true): set text(font: font)
   body
 }
 
 // 編號清單：依層級採臺灣公文常用格式 1. → (1) → A. → (A) → a. → (a)
-// Numbered list: formats common in Taiwanese official documents by level
 #let list-style(body) = {
   set enum(
     full: true,
@@ -263,7 +225,7 @@
   body
 }
 
-// 圖說：楷體；圖片的圖說置於上方 / Figure caption: Kai; image captions go above
+// 圖說：楷體；圖片的圖說置於上方
 #let figure-style(font: font-kai, body) = {
   show figure.caption: set text(font: font)
   show figure.where(kind: image): set figure.caption(position: top)
@@ -271,7 +233,6 @@
 }
 
 // 註腳：文內標籤黑體上標；頁底懸掛縮排
-// Footnotes: sans-serif superscript label in the text; hanging indent at the bottom
 #let footnote-style(font: font-song, label-font: font-hei, body) = {
   show footnote: set text(font: label-font)
 
@@ -282,13 +243,12 @@
     let loc = it.note.location()
 
     // 以 grid 切兩欄實現懸掛縮排；以 block 的 bottom inset 控制註腳間距
-    // A two-column grid gives the hanging indent; the block's bottom inset sets spacing between footnotes
     block(
       width: 100%,
       inset: (bottom: 0.6em),
       grid(
         columns: (1.25em, 1fr),
-        // 左欄放編號、右欄放內文 / Left: number, right: body
+        // Left: number, right: 內文
         text(font: label-font)[#super[#counter(footnote).display(at: loc)]], it.note.body,
       ),
     )
@@ -298,13 +258,10 @@
 }
 
 // 標題：編號見 heading-number；外觀如下
-// Headings: numbering by heading-number; display as follows
 //   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
-//            Whether to add a "Chapter N" level on top (used by large-note.typ)
 //   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
-//     Level 1: centered; when large, level 1 is the chapter, one size larger, on a new page
-//   - 其餘層級：靠左 / Other levels: left-aligned
-//   - 無編號（目錄、參考文獻等）：原樣輸出 / Unnumbered (TOC, references, ...): output as-is
+//   - 其餘層級：靠左
+//   - 無編號（目錄、參考文獻等）：原樣輸出
 #let heading-style(font: font-hei, large: false, body) = {
   show heading: set text(font: font, weight: "bold")
 
@@ -340,10 +297,6 @@
 // 交互參照：@label 指向有編號的標題時，輸出完整層級路徑，例如「壹、二、(三)」；
 // 以 @label[見] 傳入的補充文字會接在路徑前面。頁碼參照 ref(form: "page") 與
 // 其餘參照（含文獻引用）原樣交回。large 須與 heading-style 一致。
-// Cross-references: @label to a numbered heading prints the full path, e.g.
-// 壹、二、(三); a supplement given as @label[見] goes in front of it. Page
-// references, ref(form: "page"), and every other reference, citations
-// included, are passed through unchanged. large must match heading-style.
 #let ref-style(large: false, body) = {
   show ref: it => {
     if it.form != "normal" { return it }
@@ -358,32 +311,24 @@
 
 // ============================================================
 // § 基本排版規則（全部套用）
-// § Base typesetting rules (all of the above)
 //
 //   以 `show: common-style.with(...)` 套用。入口檔可在其後再寫
 //   set 規則覆寫（例如段落縮排），較內層的 set 規則優先；
 //   需要更細的控制時，改為個別套用上列函式。
-//   Apply with `show: common-style.with(...)`. Entry points may
-//   override afterwards with their own set rules (e.g. paragraph
-//   indent); inner set rules take precedence. For finer control,
-//   apply the functions above one by one instead.
 //
 //   - large: 是否在最上層多加一層「第一章」（由 large-note.typ 使用）
-//            Whether to add a "Chapter N" level on top (used by large-note.typ)
 //   - fonts: 覆寫字型的 dictionary，可用的鍵為 song、hei、kai，值為字型清單；
 //            未列出的鍵使用預設。例如 fonts: (song: ("Libertinus Serif", "Noto Serif CJK TC"))。
 //            song 用於內文與註腳，hei 用於標題與註腳編號，kai 用於區塊引用與圖說。
 //            若要保留預設的降級順序，只在前面加字型：("My Font", ..font-song)。
 //            title-block 與 inquote 不經過 common-style，請另以各自的 font 參數指定。
-//            Dictionary to override fonts. Keys are song, hei and kai, values are font lists;
-//            keys that are left out keep the defaults. song sets the body text and footnotes,
-//            hei the headings and footnote labels, kai the block quotes and figure captions.
-//            To keep the default fallback order, only prepend fonts: ("My Font", ..font-song).
-//            title-block and inquote are not applied by common-style; set their own font parameter.
 // ============================================================
 #let common-style(title: "", authors: (), large: false, fonts: (:), body) = {
   for key in fonts.keys() {
-    assert(key in ("song", "hei", "kai"), message: "common-style: unknown key `" + key + "` in fonts; expected song, hei or kai")
+    assert(
+      key in ("song", "hei", "kai"),
+      message: "common-style: unknown key `" + key + "` in fonts; expected song, hei or kai",
+    )
   }
   let song = fonts.at("song", default: font-song)
   let hei = fonts.at("hei", default: font-hei)
@@ -404,16 +349,11 @@
 
 // ============================================================
 // § 移除超連結樣式
-// § Strip hyperlink styling
 //
 //   引用（Typst 原生 cite，或衍生模板所用 citrus 的 cite）會被包成
 //   指向參考文獻的 link，在註腳中顯示為超連結。以 `show: plain-links` 套用後，
 //   其後內容的連結一律只輸出文字。請在 outline 之後才套用，
 //   以免目錄失去頁內跳轉。
-//   Citations (native, or citrus in derived templates) are wrapped in links to the
-//   bibliography and show up as hyperlinks in footnotes. After
-//   `show: plain-links`, links in the following content render as
-//   plain text. Apply it after the outline so the TOC keeps its jumps.
 // ============================================================
 #let plain-links(body) = {
   show link: it => it.body
