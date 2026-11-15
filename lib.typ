@@ -19,12 +19,12 @@
 //   拉丁（無襯線）/ Latin sans:  Liberation Sans、Arimo（Arial 的相容字型 / metric-compatible with Arial）
 //   CJK 宋/Song: Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC
 //   CJK 黑/Hei:  Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC
-//   CJK 楷/Kai:  LXGW WenKai TC、TW-Kai；皆無時改用宋體降級字型
+//   CJK 楷/Kai:  TW-MOE-Std-Kai（教育部標準楷書）、TW-Kai（全字庫正楷體）、LXGW WenKai TC；皆無時改用宋體降級字型
 #let fallback-latin-serif = ("Libertinus Serif",)
 #let fallback-latin-sans = ("Liberation Sans", "Arimo")
 #let fallback-cjk-serif = ("Noto Serif CJK TC", "Source Han Serif TC", "Noto Serif TC")
 #let fallback-cjk-sans = ("Noto Sans CJK TC", "Source Han Sans TC", "Noto Sans TC")
-#let fallback-cjk-kai = ("LXGW WenKai TC", "TW-Kai")
+#let fallback-cjk-kai = ("TW-MOE-Std-Kai", "TW-Kai", "LXGW WenKai TC")
 
 #let font-song = ("Times New Roman", "PMingLiU", ..fallback-latin-serif, ..fallback-cjk-serif)
 #let font-hei = ("Arial", "Microsoft JhengHei UI", ..fallback-latin-sans, ..fallback-cjk-sans)
