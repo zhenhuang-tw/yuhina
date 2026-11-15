@@ -150,10 +150,14 @@
 // ============================================================
 // § 標題編號
 // ============================================================
-#let ch-big-numbers = ("壹", "貳", "參", "肆", "伍", "陸", "柒", "捌", "玖", "拾")
+// 大寫中文數字，如 3 →「參」、11 →「拾壹」、20 →「貳拾」。
+// Typst 內建的 "壹" 數字採簡體字形（贰、叁、陆），故換回臺灣常用的貳、參、陸；
+// 其餘字（壹肆伍柒捌玖拾佰仟零）兩種字形相同。
+#let ch-big-number(n) = numbering("壹", n).replace("贰", "貳").replace("叁", "參").replace("陆", "陸")
 
 // 單一標題的編號，如「(三) 」；n 為各層計數，例如 (1, 2, 3)。
-// 六層依序為「壹、一、(一) 1.(1) ①」；超過六層者無編號（回傳 none）。
+// 六層依序為「壹、一、(一) 1.(1) ①」，各層數字超過十時依序進位，如「拾壹、」「十一、」；
+// 超過六層者無編號（回傳 none）。
 // large 為 true 時，於現有層級上方多加一層「章」。
 #let heading-number(n, large: false) = {
   let level-offset = if large { 1 } else { 0 }
@@ -162,7 +166,7 @@
   if large and n.len() == 1 {
     numbering("第一章 ", val)
   } else if level == 1 {
-    if val <= 10 { ch-big-numbers.at(val - 1) + "、" } else { str(val) }
+    ch-big-number(val) + "、"
   } else if level == 2 {
     numbering("一、", ..n.slice(1 + level-offset))
   } else if level == 3 {
