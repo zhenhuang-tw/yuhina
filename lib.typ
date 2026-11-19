@@ -241,6 +241,7 @@
 #let text-style(font: font-song, size: 12pt, body) = {
   set text(font: font, size: size, lang: "zh", region: "tw")
   show: show-cn-fakebold-smart
+  set underline(offset: .2em, stroke: .05em, evade: false)
   body
 }
 
