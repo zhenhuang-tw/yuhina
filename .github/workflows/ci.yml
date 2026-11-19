@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # 與 typst.toml 的 compiler 一致；tytanic 0.4.1 內建 Typst 0.15.1
+  TYPST_VERSION: 0.15.1
+  TYTANIC_VERSION: 0.4.1
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Typst and tytanic
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -sSfL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" \
+            | tar -xJ --strip-components=1 -C "$HOME/.local/bin" typst-x86_64-unknown-linux-musl/typst
+          curl -sSfL "https://github.com/typst-community/tytanic/releases/download/v${TYTANIC_VERSION}/tytanic-x86_64-unknown-linux-musl.tar.xz" \
+            | tar -xJ --strip-components=1 -C "$HOME/.local/bin" tytanic-x86_64-unknown-linux-musl/tt
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install fonts and pdffonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk poppler-utils
+
+      - name: Check that every version number matches typst.toml
+        run: |
+          version=$(grep -oP '^version = "\K[^"]+' typst.toml)
+          echo "typst.toml version: $version"
+          # 檔案中所有 @preview/yuhina:x.y.z、@local/yuhina:x.y.z 與本機安裝路徑 yuhina\x.y.z
+          found=$(git grep -hoP '@(preview|local)/yuhina:\K[0-9]+\.[0-9]+\.[0-9]+|yuhina\\\K[0-9]+\.[0-9]+\.[0-9]+' -- ':!CHANGELOG.md' | sort -u)
+          echo "versions found: $(echo $found)"
+          if [ "$found" != "$version" ]; then
+            echo "::error::versions in the files ($(echo $found)) do not match typst.toml ($version)"
+            git grep -nP '@(preview|local)/yuhina:[0-9.]+|yuhina\\[0-9.]+' -- ':!CHANGELOG.md'
+            exit 1
+          fi
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match typst.toml version ${version}"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: tt run --no-fail-fast
+
+      - name: Install the package as @preview from git archive
+        # 以 git archive 的內容模擬發布到 typst/packages 的檔案
+        run: |
+          version=$(grep -oP '^version = "\K[^"]+' typst.toml)
+          dest="$HOME/.local/share/typst/packages/preview/yuhina/$version"
+          mkdir -p "$dest"
+          git archive HEAD | tar -x -C "$dest"
+          ls -R "$dest"
+
+      - name: Compile the examples
+        run: |
+          mkdir -p out
+          for f in examples/*.typ; do
+            typst compile "$f" "out/$(basename "$f" .typ).pdf"
+          done
+
+      - name: Check that CJK text uses the TC faces of Noto CJK
+        # 只裝了 Noto CJK（含 JP、SC、KR、HK 等版本）時，應選用 TC 版本
+        run: |
+          for pdf in out/*.pdf; do
+            pdffonts "$pdf"
+            if ! pdffonts "$pdf" | grep -q 'CJKtc'; then
+              echo "::error::$pdf does not use a Noto CJK TC face"
+              exit 1
+            fi
+            if pdffonts "$pdf" | grep -E 'CJK(jp|sc|kr|hk)'; then
+              echo "::error::$pdf uses a non-TC face of Noto CJK"
+              exit 1
+            fi
+          done
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: examples
+          path: out/
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-diffs
+          path: tests/**/diff/
+          if-no-files-found: ignore
