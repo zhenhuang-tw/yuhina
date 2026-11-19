@@ -221,13 +221,6 @@
     if type(a) == dictionary { a.at("name", default: "") } else { str(a) }
   })
   set document(title: title, author: author-names)
-
-  /*
-    PDF 後處理指令:
-    編譯後若需修改 PDF 製作者資訊，請於 PowerShell 執行：
-    `exiftool -Producer="國立臺北大學法律學院115-1公法讀書會"`
-  */
-
   body
 }
 
