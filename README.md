@@ -147,14 +147,13 @@ New-Item -ItemType Junction -Path $pkg -Target (Resolve-Path .)
 | `heading-style`  | 標題編號與外觀           | `font: font-hei`、`large: false`                             |
 | `ref-style`      | 交互參照                 | `large: false`（須與 `heading-style` 一致）                  |
 
-其他公開名稱：
+其他公開名稱（以 `*` 匯入時只會取得本節兩個表格所列的名稱）：
 
 | 名稱                                                           | 用途                                   |
 | -------------------------------------------------------------- | -------------------------------------- |
 | `font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong` | 字型組合                               |
 | `keyword`、`inquote`                                           | 行內樣式：重點強調、行內引用（楷體）   |
-| `title-block`、`normalize-authors`、`render-authors`           | 標題與作者區塊                         |
-| `heading-number`、`heading-path`                               | 標題編號與交互參照路徑，供模板自訂顯示 |
+| `title-block`、`normalize-authors`                             | 標題與作者區塊                         |
 | `plain-links`                                                  | 移除其後內容的超連結樣式               |
 
 ## 版本
