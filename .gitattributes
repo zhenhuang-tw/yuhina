@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# 不屬於套件的檔案：`git archive` 不輸出，故不會複製到 typst/packages
+/tests export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
