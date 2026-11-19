@@ -57,6 +57,9 @@
 #let font-hei = (..win-latin-sans, ..win-cjk-hei, ..fallback-latin-sans, ..fallback-cjk-sans)
 #let font-kai = (..win-latin-serif, ..win-cjk-kai, ..fallback-latin-serif, ..fallback-cjk-kai, ..fallback-cjk-serif)
 #let font-yuan = ("TaiwanPearl", ..win-latin-sans, ..win-cjk-hei, ..fallback-latin-sans, ..fallback-cjk-sans) // Source: https://github.com/max32002/TaiwanPearl
+// 朱雀仿宋目前只有預覽版，家族名稱帶有「(technical preview)」。上游說明正式版尚未發布；
+// 正式版若改名，須更新下列名稱（並視為行為變更記入 CHANGELOG）。
+// 維護時請定期查看 https://github.com/TrionesType/zhuque/releases
 #let font-fsong = (
   "Zhuque Fangsong (technical preview)",
   ..win-latin-serif,
