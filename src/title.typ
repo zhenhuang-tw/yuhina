@@ -25,6 +25,7 @@
 }
 
 // 置中的標題區塊：主標題（含 thanks）、副標題、作者；
+// authors 可為字串、單一 dict 或陣列（同 normalize-authors）；
 // font、weight 為標題與副標題的字型與粗細（預設黑體粗體），
 // 例如楷體不加粗：`font: font-kai, weight: "regular"`。
 #let title-block(
@@ -48,5 +49,5 @@
 
   #v(1em)
 
-  #render-authors(authors)
+  #render-authors(normalize-authors(authors))
 ]
