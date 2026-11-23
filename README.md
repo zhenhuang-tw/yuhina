@@ -1,46 +1,141 @@
 # yuhina
 
-A shared typesetting base for Traditional Chinese documents in Taiwan, designed for [Typst](https://typst.app/) templates to import. Out of the box it favors:
+English | [繁體中文](README.zh-TW.md)
 
-1. The Traditional Chinese fonts DFKai-SB and PMingLiU bundled with Windows — the most widely used operating system in Taiwan — while also offering automatic fallback to open-source fonts for other environments.
-2. Headings default to the Traditional Chinese numbering convention common in Taiwanese word processing, such as 壹、一、(一).
+A shared typesetting base for Traditional Chinese documents in Taiwan, to be imported by [Typst](https://typst.app/) files. Compared with other Chinese typesetting packages, its distinguishing defaults are:
 
-The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/Taiwan_yuhina), a bird species endemic to Taiwan.
+1. It prefers the fonts that ship with the Taiwanese edition of Windows (the most widely used operating system in Taiwan), such as PMingLiU (新細明體), DFKai-SB (標楷體) and Microsoft JhengHei (微軟正黑體), and falls back to openly licensed fonts elsewhere.
+2. Headings use the six-level numbering common in Taiwanese documents, "壹、一、(一)", and cross-references print the full heading path, e.g. "見壹、二、(三)".
 
-臺灣繁體中文文件的共通排版基礎，供 [Typst](https://typst.app/) 模板匯入：字體、行內樣式函式、作者與標題區塊，以及可個別套用的排版規則（頁面、段落、註腳、「壹、一、(一)」六層標題編號、「見壹、二、(三)」交互參照等）。
+It also provides inline styles, title and author blocks, and typesetting rules that can be applied one by one (page, paragraph, footnote, list, figure caption, and so on).
 
-本套件的名稱 `yuhina` 得名於臺灣特有種[冠羽鳳眉](https://zh.wikipedia.org/zh-tw/褐头凤鹛)（Taiwan yuhina）。
+The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/Taiwan_yuhina) (冠羽鳳眉), a bird endemic to Taiwan. Its sister packages [bluemagpie](https://github.com/zhenhuang-tw/bluemagpie) (for lecture notes) and [flamegold](https://github.com/zhenhuang-tw/flamegold) (for legal writing) are both built on it.
 
-本套件的姊妹作 [bluemagpie](https://github.com/zhenhuang-tw/bluemagpie) （筆記用）與 [flamegold](https://github.com/zhenhuang-tw/flamegold) （法學寫作）依賴本套件。
+## Quick start
 
-## 環境需求
+```typ
+#import "@preview/yuhina:0.1.0": *
 
-1. [Typst](https://github.com/typst/typst#installation) 0.14 以上。
-2. 字型：預設優先使用 Windows／Office 內建的 Times New Roman、Arial、新細明體、標楷體、Microsoft JhengHei UI。缺少時會依[字型降級](#字型降級)改用其他字型。
+#show: common-style.with(title: "文件標題", authors: "王小明")
 
-首次編譯時，Typst 會自動下載 `@preview/cuti`。
+#title-block("文件標題", authors: "王小明")
 
-## 字型降級
+= 緒論 <intro>
 
-Linux 等非 Windows 環境通常沒有上述字型。本套件不支援 macOS，因此降級清單不含 macOS 專有字型（如 Songti TC、PingFang TC）。每組字型（`font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong`）都是一份依優先順序排列的清單，Typst 會逐字形挑選第一個已安裝且含有該字形的字型，找不到的字型會略過，但每個找不到的家族都會顯示一則 `unknown font family` 警告（不影響輸出；避免警告的方法見[編譯指令](#編譯指令)）。因此在缺字型的環境，會依下表順序降級：
+本文的#keyword[重點]如下（@detail[見]）。
 
-| 用途               | 優先（Windows／Office）                    | 降級字型                                                                                                     |
-| ------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| 內文（宋體）       | Times New Roman、新細明體（PMingLiU）      | Libertinus Serif（Typst 內建）；Noto Serif CJK TC、Source Han Serif TC、Noto Serif TC                        |
-| 標題（黑體）       | Arial、Microsoft JhengHei UI               | Libertinus Sans；Noto Sans CJK TC、Source Han Sans TC、Noto Sans TC                                          |
-| 引用、圖說（楷體） | Times New Roman、標楷體（DFKai-SB）        | 拉丁同宋體；TW-MOE-Std-Kai（教育部標準楷書）、TW-Kai（全字庫正楷體）、LXGW WenKai TC；皆無時改用宋體降級字型 |
-| 圓體、仿宋         | TaiwanPearl、Zhuque Fangsong（需自行安裝） | 圓體同黑體降級字型；仿宋同宋體降級字型                                                                       |
+== 細節 <detail>
 
-注意事項：
+#inquote[行內引用以楷體呈現。]
+```
 
-- 降級字型需自行安裝。建議安裝 Noto Serif／Sans CJK TC 與 [Libertinus](https://github.com/alerque/libertinus) 家族的 Libertinus Sans；拉丁宋體的降級字型 Libertinus Serif 由 Typst 內建，不必另外安裝。**請安裝「TC」（繁體中文）版本**：若只有 JP、SC 等其他地區版本，Typst 可能改用它們，同一個漢字的字形會與臺灣用字不同。
-- 清單中的拉丁字型排在 CJK 字型之前，所以拉丁字母與數字由 Libertinus Serif（宋體）或 Libertinus Sans（黑體）呈現，漢字與全形標點由 CJK 字型呈現。未安裝 Libertinus Sans 時，黑體的拉丁字母與數字改由 CJK 黑體字型自帶的拉丁字形呈現。Libertinus Sans 與 Arial 的字寬不同，因此降級後的換行與頁數可能與 Windows 上的結果有差異。
-- 粗體：`text-style` 以清單中第一個 CJK 字型判斷是否使用 [cuti](https://typst.app/universe/package/cuti) 偽粗體，而不是實際使用的字型。預設清單的第一個 CJK 字型是新細明體等，沒有粗體，因此降級到有真粗體的 Noto 等字型時，仍會再疊加偽粗體，粗體會略粗。需要精確控制時，請以 `text-style.with(font: (...))` 自訂字型清單，把要用的 CJK 字型排在第一個 CJK 位置。
-- 降級字型清單依各平臺的常見家族名稱整理，並非每個平臺都逐一實測。若您的環境字型名稱不同，請以 `text-style.with(font: (...))` 自訂清單，或在 repo 開 issue。
+See [`examples/basic.typ`](examples/basic.typ) for a complete example.
 
-### 編譯指令
+When compiling, add `--input USE_WIN=1` on Windows or `--input USE_LINUX=1` on Linux to avoid a flood of missing-font warnings (see [Compile commands](#compile-commands)):
 
-Typst 沒有關閉 `unknown font family` 警告的設定，文件內也無法查詢已安裝字型，所以只能由使用者在編譯時告知環境（做法參考 [Typst 論壇的討論](https://forum.typst.app/t/is-it-possible-to-suppress-the-warning-about-noto-cjk-source-han-duality/2207)）。請依作業系統加上 `--input`：
+```powershell
+typst compile file.typ --input USE_WIN=1
+```
+
+### Pitfalls when writing
+
+- Do not break a Chinese sentence across lines in the source. Typst treats the line break as a space and prints "甲， 乙".
+- Chinese text right after `@label` becomes part of the label name. Write `#ref(<label>)的` instead, or add a supplement after the label, such as `@label[見]`.
+
+## Requirements
+
+1. [Typst](https://github.com/typst/typst#installation) 0.15.1 or later.
+2. Fonts: by default, the Windows/Office fonts Times New Roman, Arial, PMingLiU, DFKai-SB and Microsoft JhengHei UI are preferred. Missing fonts are replaced as described in [Font fallback](#font-fallback).
+
+On the first compilation, Typst downloads this package and its dependency [`@preview/cuti`](https://typst.app/universe/package/cuti) automatically.
+
+## Public API
+
+`#import "@preview/yuhina:0.1.0": *` imports only the names listed below. Names not listed (helpers under `src/`, fallback font lists, and so on) are internal and may change at any time; do not rely on them.
+
+### Typesetting rules
+
+`common-style` applies every rule in the table below, in order. For finer control, apply them one by one instead. Each function is applied with `#show: function` or `#show: function.with(...)` and affects only the content after it.
+
+| Function         | Purpose                                   | Parameters (defaults)                                        |
+| ---------------- | ----------------------------------------- | ------------------------------------------------------------ |
+| `document-style` | PDF title and authors                     | `title: ""`, `authors: ()`                                   |
+| `page-style`     | Paper, margins, centered page number      | `paper: "a4"`, `margin: (x: 3cm, y: 2.5cm)`                  |
+| `text-style`     | Fonts, language, CJK bold                 | `font: font-song`, `size: 12pt`                              |
+| `par-style`      | Paragraphs                                | `first-line-indent: 0em`, `leading: 1.1em`, `spacing: 1.6em` |
+| `quote-style`    | Block quotes                              | `font: font-kai`                                             |
+| `list-style`     | Numbered and bulleted lists               | none                                                         |
+| `figure-style`   | Figure captions                           | `font: font-kai`                                             |
+| `footnote-style` | Footnotes                                 | `font: font-song`, `label-font: font-hei`                    |
+| `heading-style`  | Heading numbering and appearance          | `font: font-hei`, `large: false`                             |
+| `ref-style`      | Cross-references                          | `large: false` (must match `heading-style`)                  |
+
+Parameters of `common-style`:
+
+| Parameter | Default | Description                                                                                      |
+| --------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `title`   | `""`    | Title in the PDF metadata (not printed on the page; use `title-block` for the printed title)      |
+| `authors` | `()`    | Authors in the PDF metadata, in the same format as for `title-block`                             |
+| `large`   | `false` | Whether to add a top level "Ch. 1" above the other levels, for long documents split into chapters |
+| `fonts`   | `(:)`   | Font overrides, see [Overriding fonts](#overriding-fonts)                                        |
+
+### Other names
+
+| Name                                                           | Purpose                                                                                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `font-song`, `font-hei`, `font-kai`, `font-yuan`, `font-fsong` | Font lists: Song (serif), Hei (sans-serif), Kai (regular script), Yuan (rounded) and Fangsong                            |
+| `keyword`                                                      | Inline emphasis (bold)                                                                                                   |
+| `inquote`                                                      | Inline quotation (Kai by default; set another with the `font` parameter)                                                 |
+| `title-block`                                                  | Centered title block with title, subtitle and authors; parameters `title-thanks`, `subtitle`, `authors`, `font`, `weight` |
+| `normalize-authors`                                            | Turns authors given as a string, a single dictionary or an array into an array, for custom templates                    |
+| `plain-links`                                                  | Removes link styling from the content after it; apply it after the outline so that the outline keeps its internal links |
+
+An author can be a string or a dictionary with `name` and `thanks` (`thanks` is rendered as a footnote); several authors are given as an array mixing both:
+
+```typ
+#title-block(
+  "文件標題",
+  title-thanks: [本文為國立臺灣大學法律學系115學年度第1學期「弄春池生態專題研究」課程（授課教師：生工系共授）的學期報告初稿。],
+  subtitle: "副標題",
+  authors: ((name: "王小明", thanks: [國立臺灣大學法律學系碩士生，通訊作者。]), "李小華"),
+)
+```
+
+### Heading numbering
+
+| Level | Number    | With `large: true` |
+| ----- | --------- | ------------------ |
+| 1     | 壹、      | Ch. 1              |
+| 2     | 一、      | 壹、               |
+| 3     | (一)      | 一、               |
+| 4     | 1.        | (一)               |
+| 5     | (1)       | 1.                 |
+| 6     | ①         | (1)                |
+| 7     | no number | ①                  |
+
+Top-level numbers beyond ten continue as "拾壹、", "貳拾、" and so on. Cross-references print the full path: `@label` gives "壹、二、(三)" and `@label[見]` gives "見壹、二、(三)". References to figures, bibliography entries and other targets are not affected.
+
+## Font fallback
+
+Linux and other non-Windows systems usually lack the fonts above. (macOS support is not planned for now, so the fallback lists do not include macOS-only fonts such as Songti TC or PingFang TC.) Each font group (`font-song`, `font-hei`, `font-kai`, `font-yuan`, `font-fsong`) is a list in order of priority, and Typst picks, glyph by glyph, the first installed font that has the glyph. Missing fonts are skipped, but each missing family causes an `unknown font family` warning (the output is unaffected; see [Compile commands](#compile-commands) to avoid the warnings). On a system without the preferred fonts, the fallbacks apply in this order:
+
+| Use                             | Preferred (Windows/Office)                       | Fallback                                                                                                                         |
+| ------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Body text (Song)                | Times New Roman, PMingLiU                        | Libertinus Serif (bundled with Typst); Noto Serif CJK TC, Source Han Serif TC, Noto Serif TC                                     |
+| Headings (Hei)                  | Arial, Microsoft JhengHei UI                     | Libertinus Sans; Noto Sans CJK TC, Source Han Sans TC, Noto Sans TC                                                              |
+| Quotes and captions (Kai)       | Times New Roman, DFKai-SB                        | Latin as for Song; TW-MOE-Std-Kai (教育部標準楷書), TW-Kai (全字庫正楷體), LXGW WenKai TC; if none is installed, the Song fallbacks |
+| Rounded and Fangsong            | TaiwanPearl, Zhuque Fangsong (install yourself)  | Rounded: the Hei fallbacks; Fangsong: the Song fallbacks                                                                         |
+
+Notes:
+
+- Fallback fonts must be installed by you. We recommend Noto Serif/Sans CJK TC and Libertinus Sans from the [Libertinus](https://github.com/alerque/libertinus) family; Libertinus Serif, the Latin Song fallback, is bundled with Typst. **Install the TC (Traditional Chinese) versions**: if only the JP, SC or other regional versions are installed, Typst may use them, and the same character will take glyph shapes that differ from Taiwanese usage.
+- Latin fonts come before CJK fonts in each list, so Latin letters and digits are set in Libertinus Serif (Song) or Libertinus Sans (Hei), and Chinese characters and full-width punctuation in the CJK font. Without Libertinus Sans, Latin letters and digits in Hei fall back to the Latin glyphs of the CJK sans-serif font. Libertinus Sans and Arial have different widths, so line breaks and page counts after fallback may differ from those on Windows.
+- Bold: `text-style` decides whether to apply [cuti](https://typst.app/universe/package/cuti) fake bold from the first CJK font in the list, not from the font actually used. In the default lists the first CJK font is PMingLiU or a similar font without a bold face, so when the text falls back to a font with a real bold face, such as Noto, fake bold is still added on top and bold text comes out slightly heavier. For precise control, define your own font list (see [Overriding fonts](#overriding-fonts)) with the CJK font you want in the first CJK position.
+- The fallback lists are based on the family names common on each platform; not every platform has been tested. If your fonts have different names, define your own list or open an issue in the repository.
+
+### Compile commands
+
+Typst has no setting to silence `unknown font family` warnings, and a document cannot query which fonts are installed, so the user has to state the environment at compile time (an approach taken from a [discussion on the Typst forum](https://forum.typst.app/t/is-it-possible-to-suppress-the-warning-about-noto-cjk-source-han-duality/2207)). Add `--input` for your operating system:
 
 ```powershell
 # Windows
@@ -54,41 +149,48 @@ typst c file.typ --input USE_LINUX=1
 typst w file.typ --input USE_LINUX=1
 ```
 
-旗標的值可為 `1` 或 `true`。兩者皆不設定時，保留上表的完整清單（缺字型時會有警告）；同時設定會報錯。各模式實際使用的字型如下：
+The flag value can be `1` or `true`. Without either flag, the full lists above are kept (with warnings for missing fonts); setting both is an error. The fonts used in each mode are:
 
-| 用途               | `USE_WIN=1`                                | `USE_LINUX=1`                                               |
-| ------------------ | ------------------------------------------ | ----------------------------------------------------------- |
-| 內文（宋體）       | Times New Roman、新細明體、Libertinus Serif | Libertinus Serif、Noto Serif CJK TC                         |
-| 標題（黑體）       | Arial、Microsoft JhengHei UI               | Libertinus Sans、Noto Sans CJK TC                           |
-| 引用、圖說（楷體） | Times New Roman、標楷體、Libertinus Serif  | Libertinus Serif、TW-MOE-Std-Kai、Noto Serif CJK TC         |
-| 圓體、仿宋         | 首選字型（需自行安裝）加上同黑體、宋體      | 首選字型（需自行安裝）加上同黑體、宋體                      |
+| Use                       | `USE_WIN=1`                                   | `USE_LINUX=1`                                       |
+| ------------------------- | --------------------------------------------- | --------------------------------------------------- |
+| Body text (Song)          | Times New Roman, PMingLiU, Libertinus Serif   | Libertinus Serif, Noto Serif CJK TC                 |
+| Headings (Hei)            | Arial, Microsoft JhengHei UI                  | Libertinus Sans, Noto Sans CJK TC                   |
+| Quotes and captions (Kai) | Times New Roman, DFKai-SB, Libertinus Serif   | Libertinus Serif, TW-MOE-Std-Kai, Noto Serif CJK TC |
+| Rounded and Fangsong      | Preferred font (install yourself), then as Hei or Song | Preferred font (install yourself), then as Hei or Song |
 
-Libertinus Serif 由 Typst 內建，不會產生警告，所以兩種模式都保留。這些設定對所有匯入 yuhina 的模板（如 flamegold、bluemagpie）一併生效。
+Libertinus Serif is bundled with Typst and never causes a warning, so both modes keep it. These settings also apply to every template that imports yuhina, such as flamegold and bluemagpie.
 
-注意：
+Notes:
 
-- 不會自動偵測作業系統，須自己加上旗標。在 Windows 上用 `USE_LINUX`，或在 Linux 上用 `USE_WIN`，都會因缺字型而沒有可用的降級。本套件不支援 macOS，沒有對應的旗標。
-- `USE_LINUX=1` 要求您已安裝 Libertinus Sans、Noto Serif CJK TC、Noto Sans CJK TC 與 TW-MOE-Std-Kai（建議安裝「TC」版本，見上）；缺少的字型仍會警告，也不會再改用其他降級字型。若您安裝的是 Source Han 或 TW-Kai 等同類字型，請不要加旗標，或以 `common-style` 的 `fonts` 參數自訂清單。
-- 兩種模式都少了字型層級的補字：例如新細明體缺字時，不會再改用 Noto 補字。Typst 另有不依清單的全域補字機制，但我們沒有驗證罕用字的結果，請自行確認。
-- 圓體與仿宋的首選字型（TaiwanPearl、Zhuque Fangsong）本來就需要自行安裝，沒安裝而使用 `font-yuan`、`font-fsong` 時仍會警告。
-- 以 `common-style` 的 `fonts` 參數或個別樣式函式的 `font` 參數自訂的清單不受影響。
-- tinymist 等編輯器的即時預覽需另外在其設定中傳入同一個 `--input`，否則預覽仍會顯示警告。
-- Typst web app 不在此處理；其警告可在介面中手動關閉。
+- The operating system is not detected automatically; you must add the flag yourself. Using `USE_LINUX` on Windows, or `USE_WIN` on Linux, leaves no usable fallback because the fonts are missing. macOS support is not planned for now, so there is no flag for it.
+- `USE_LINUX=1` assumes that Libertinus Sans, Noto Serif CJK TC, Noto Sans CJK TC and TW-MOE-Std-Kai are installed (preferably the TC versions, see above). Missing fonts still cause warnings, and no other fallback is tried. If you installed Source Han, TW-Kai or similar fonts instead, do not set the flag, or define your own lists with the `fonts` parameter of `common-style`.
+- Both modes drop the font-level fallback for missing glyphs: for example, a character missing from PMingLiU is no longer taken from Noto. Typst also has a global fallback that does not follow the lists, but this project has not verified its results for rare characters; please check them yourself.
+- The preferred Rounded and Fangsong fonts (TaiwanPearl, Zhuque Fangsong) always have to be installed by you; using `font-yuan` or `font-fsong` without them still causes warnings.
+- Lists you define with the `fonts` parameter of `common-style` or the `font` parameter of the individual style functions are not affected.
+- Live previews in editors such as tinymist need the same `--input` in their own settings, or the preview still shows the warnings.
+- The Typst web app is not covered here; its warnings can be dismissed in the interface.
 
-### 選用字型：圓體與仿宋
+### Optional fonts: Rounded and Fangsong
 
-`font-yuan`（圓體）與 `font-fsong`（仿宋）使用的字型不是系統內建的，需要自行取得；沒有安裝時，會依上表降級為黑體或宋體的降級字型。本套件不內含任何字型，字型的授權與本套件的 MIT 授權各自獨立。以下資訊整理自各專案頁面（2026 年 11 月），實際以專案頁面與隨附的授權文件為準。
+`font-yuan` (Rounded) and `font-fsong` (Fangsong) use fonts that do not come with the operating system; you need to obtain them yourself. Without them, the Hei or Song fallbacks in the table above are used. This package does not include any fonts, and the font licenses are independent of this package's MIT license. The information below is summarized from each project page (November 2026); the project pages and the license files shipped with the fonts prevail.
 
-| 字型                                                              | 清單中的名稱                          | 授權                                                                              | 取得方式                                                        | 注意                                                                                                                                     |
-| ----------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| [台灣圓體 TaiwanPearl](https://github.com/max32002/TaiwanPearl)   | `TaiwanPearl`                         | SIL Open Font License 1.1，可免費商用                                             | 從專案頁下載 ZIP，或到 `ttf` 資料夾下載所需字型檔，再安裝到系統 | 字形改自思源黑體與小杉圓體；作者說明這不是專業字型檔，部分符號或罕用字可能缺漏。頁面只提到 Regular，沒有說明是否有粗體，粗體會套用偽粗體 |
-| [朱雀仿宋 Zhuque Fangsong](https://github.com/TrionesType/zhuque) | `Zhuque Fangsong (technical preview)` | SIL Open Font License 1.1，可免費商用、複製與再散布，但不可單獨販售原始版或修改版 | 從專案頁的 Releases 取得（頁面另提供 AtomGit 鏡像）             | 專案頁說明正式版尚未發布；清單中的名稱對應預覽版，字型家族名稱改變時需自訂清單。頁面未說明字形是否符合臺灣標準，使用前請自行確認         |
+| Font                                                              | Name in the list                      | License                                                                                                         | How to get it                                                                       | Notes                                                                                                                                                                                                       |
+| ----------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [TaiwanPearl 台灣圓體](https://github.com/max32002/TaiwanPearl)   | `TaiwanPearl`                         | SIL Open Font License 1.1; free for commercial use                                                              | Download the ZIP from the project page, or the font files from its `ttf` folder, and install them | Glyphs derived from Source Han Sans and Kosugi Maru; the author notes that it is not a professional font and some symbols or rare characters may be missing. The page mentions only Regular and says nothing about bold, so bold uses fake bold |
+| [Zhuque Fangsong 朱雀仿宋](https://github.com/TrionesType/zhuque) | `Zhuque Fangsong (technical preview)` | SIL Open Font License 1.1; free for commercial use, copying and redistribution, but may not be sold by itself, modified or not | From the Releases of the project page (an AtomGit mirror is also listed there)     | The page does not say whether the glyphs follow Taiwanese standards; check before use                                                                                                                       |
 
-OFL 1.1 允許在文件中使用字型並散布產出的 PDF，但若要再散布字型檔本身，必須遵守授權條款，包括隨附授權文件與不得單獨販售。
+OFL 1.1 allows using the fonts in documents and distributing the resulting PDFs. Redistributing the font files themselves must follow the license, including shipping the license file and not selling the fonts by themselves.
 
-### 覆寫字型
+**The Zhuque Fangsong family name**: `Zhuque Fangsong (technical preview)`, used by `font-fsong`, is the family name of the preview release. The upstream project page says the stable release is not out yet. If the stable release uses another family name, `font-fsong` will not find it and will use the fallbacks. This package will update the list in a new version; until then, if you have installed the stable release, define your own list:
 
-`common-style` 的 `fonts` 參數可覆寫字型。鍵為 `song`（內文與註腳）、`hei`（標題與註腳編號）、`kai`（區塊引用與圖說），值為字型清單；沒列出的鍵維持預設。寫了其他鍵會直接報錯，以免打錯字而沒有生效。
+```typ
+#let my-fsong = ("正式版的家族名稱", ..font-fsong)
+#text(font: my-fsong)[仿宋文字]
+```
+
+### Overriding fonts
+
+The `fonts` parameter of `common-style` overrides fonts. Its keys are `song` (body text and footnotes), `hei` (headings and footnote numbers) and `kai` (block quotes and captions), and its values are font lists; keys not given keep their defaults. Any other key is an error, so that a typo does not silently do nothing.
 
 ```typ
 // 完全自訂：只使用指定的字型
@@ -102,13 +204,26 @@ OFL 1.1 允許在文件中使用字型並散布產出的 PDF，但若要再散�
 )
 ```
 
-不經過 `common-style` 的 `title-block` 與 `inquote` 另以 `font` 參數指定，例如 `#title-block("標題", font: font-song)`、`#inquote(font: font-song)[文字]`。`title-block` 預設為黑體粗體，另有 `weight` 參數可調整粗細，例如楷體不加粗：`#title-block("標題", font: font-kai, weight: "regular")`。個別套用的樣式函式（`text-style`、`heading-style` 等）本來就有 `font` 參數。
+The first example uses only the given fonts; the second keeps the default fallback order and adds a font in front.
 
-自訂完整清單時，請把要用的 CJK 字型排在清單中第一個 CJK 位置，因為粗體判斷（見上）是看它。
+`title-block` and `inquote` are not covered by `common-style`; set their fonts with the `font` parameter, e.g. `#title-block("標題", font: font-song)` or `#inquote(font: font-song)[文字]`. `title-block` is bold Hei by default, and its `weight` parameter changes the weight, e.g. regular Kai: `#title-block("標題", font: font-kai, weight: "regular")`. The individual style functions (`text-style`, `heading-style`, and so on) have their own `font` parameter.
 
-## 安裝為 local package
+When you define a complete list, put the CJK font you want in the first CJK position, because the bold detection (see above) looks at it.
 
-尚未發布到 Typst Universe，請以本機套件的方式使用。Typst 會在 `%APPDATA%\typst\packages\local\<名稱>\<版本>` 尋找本機套件；建立一個指向本 repo 的目錄連結（junction），修改 repo 後不必重新複製：
+## Versioning
+
+This package follows [Semantic Versioning 2.0.0](https://semver.org/). The public API consists of the names listed under [Public API](#public-api) and their parameters.
+
+- Before 1.0.0: breaking changes (removing or renaming a public name, changing a parameter or a default output) and backward-compatible new features both bump the minor version (e.g. 0.1.0 → 0.2.0); bug fixes bump the patch version (e.g. 0.1.0 → 0.1.1).
+- From 1.0.0 on: breaking changes bump the major version, new features the minor version, and bug fixes the patch version.
+
+See the [CHANGELOG](CHANGELOG.md) for the changes in each version.
+
+## Development
+
+### Installing as a local package
+
+To work on this package before a new version is published, install it as a local package. Typst looks for local packages in `%APPDATA%\typst\packages\local\<name>\<version>`; create a directory junction there that points to this repository, so that changes in the repository take effect without copying:
 
 ```powershell
 $pkg = "$env:APPDATA\typst\packages\local\yuhina\0.1.0"
@@ -116,50 +231,19 @@ New-Item -ItemType Directory -Force (Split-Path $pkg) | Out-Null
 New-Item -ItemType Junction -Path $pkg -Target (Resolve-Path .)
 ```
 
-在本 repo 根目錄執行。建立 junction 不需要系統管理員權限。
+Run this in the repository root; creating a junction does not require administrator rights. Then import with `#import "@local/yuhina:0.1.0": *`. The path contains the version number, so create a new junction after each version bump.
 
-若同時使用 [bluemagpie](https://github.com/zhenhuang-tw/bluemagpie)，改執行其 `install.ps1` 即可一併安裝兩個套件，不必另外執行上述指令。
+### Tests
 
-## 使用方式
+Tests use [tytanic](https://github.com/typst-community/tytanic) (0.4.1, which bundles Typst 0.15.1):
 
-```typ
-#import "@local/yuhina:0.1.0": *
-
-#show: common-style.with(title: "文件標題", authors: "王小明")
-
-= 緒論 <intro>
-
-見@intro。#keyword[重點]
+```powershell
+tt run              # run all tests
+tt update footnote  # update the reference image after checking the output
 ```
 
-`common-style` 依序套用下列所有規則。需要更細的控制時，改為個別套用，每個函式都以 `#show: 函式` 或 `#show: 函式.with(...)` 套用，只影響其後的內容：
+When public names are added or removed, also update `tests/api/test.typ`, both READMEs and the CHANGELOG.
 
-| 函式             | 作用                     | 參數（預設值）                                               |
-| ---------------- | ------------------------ | ------------------------------------------------------------ |
-| `document-style` | PDF 標題與作者           | `title: ""`、`authors: ()`                                   |
-| `page-style`     | 紙張、邊距、頁尾置中頁碼 | `paper: "a4"`、`margin: (x: 3cm, y: 2.5cm)`                  |
-| `text-style`     | 字型、語言、CJK 粗體     | `font: font-song`、`size: 12pt`                              |
-| `par-style`      | 段落                     | `first-line-indent: 0em`、`leading: 1.1em`、`spacing: 1.6em` |
-| `quote-style`    | 區塊引用                 | `font: font-kai`                                             |
-| `list-style`     | 編號與項目清單           | 無                                                           |
-| `figure-style`   | 圖說                     | `font: font-kai`                                             |
-| `footnote-style` | 註腳                     | `font: font-song`、`label-font: font-hei`                    |
-| `heading-style`  | 標題編號與外觀           | `font: font-hei`、`large: false`                             |
-| `ref-style`      | 交互參照                 | `large: false`（須與 `heading-style` 一致）                  |
+## License
 
-其他公開名稱（以 `*` 匯入時只會取得本節兩個表格所列的名稱）：
-
-| 名稱                                                           | 用途                                   |
-| -------------------------------------------------------------- | -------------------------------------- |
-| `font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong` | 字型組合                               |
-| `keyword`、`inquote`                                           | 行內樣式：重點強調、行內引用（楷體）   |
-| `title-block`、`normalize-authors`                             | 標題與作者區塊                         |
-| `plain-links`                                                  | 移除其後內容的超連結樣式               |
-
-## 版本
-
-因本套件的名稱與參數，供其他模板依賴，擬採用〈[語意化版本 2.0.0](https://semver.org/lang/zh-TW/)〉：向前相容的功能新增，升次版號；修改、移除既有名稱或參數，則升主版號。
-
-## LICENSE
-
-[MIT](LICENSE).
+This package is released under the [MIT](LICENSE) license. Fonts are not included in this package; see [Optional fonts](#optional-fonts-rounded-and-fangsong) for their licenses.
