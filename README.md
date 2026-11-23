@@ -115,6 +115,8 @@ An author can be a string or a dictionary with `name` and `thanks` (`thanks` is 
 
 Top-level numbers beyond ten continue as "拾壹、", "貳拾、" and so on. Cross-references print the full path: `@label` gives "壹、二、(三)" and `@label[見]` gives "見壹、二、(三)". References to figures, bibliography entries and other targets are not affected.
 
+Level-1 headings are centered and the other levels are left-aligned; unnumbered headings, such as the outline and bibliography titles, follow the same rule. The space below a heading equals the paragraph spacing, so a heading followed directly by another heading (e.g. "壹、" right before "一、") is spaced the same as a heading followed by body text. The spacing is computed at the body text size in effect where `heading-style` is applied; when applying the rules one by one, apply it after `text-style` and `par-style`.
+
 ## Font fallback
 
 Linux and other non-Windows systems usually lack the fonts above. (macOS support is not planned for now, so the fallback lists do not include macOS-only fonts such as Songti TC or PingFang TC.) Each font group (`font-song`, `font-hei`, `font-kai`, `font-yuan`, `font-fsong`) is a list in order of priority, and Typst picks, glyph by glyph, the first installed font that has the glyph. Missing fonts are skipped, but each missing family causes an `unknown font family` warning (the output is unaffected; see [Compile commands](#compile-commands) to avoid the warnings). On a system without the preferred fonts, the fallbacks apply in this order:

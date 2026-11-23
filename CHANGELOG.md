@@ -28,6 +28,7 @@ Initial release.
 - Inline styles `keyword` and `inquote`; `title-block` and `normalize-authors` for title and author blocks.
 - Typesetting rules that can be applied one by one: `document-style`, `page-style`, `text-style`, `par-style`, `quote-style`, `list-style`, `figure-style`, `footnote-style`, `heading-style` and `ref-style`; `common-style` applies all of them.
 - Six heading levels numbered 壹、一、(一)、1.、(1)、①, with an optional chapter level "Ch. 1" (`large: true`).
+- Centered level-1 headings, numbered or not, and a space below every heading equal to the paragraph spacing, so that a heading followed directly by another heading is spaced like one followed by body text.
 - Cross-references to headings that print the full heading path, e.g. 見壹、二、(三).
 - `plain-links` to drop link styling from the rest of the document.
 
