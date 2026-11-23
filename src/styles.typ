@@ -107,35 +107,37 @@
 
 // 標題：編號見 heading-number；外觀如下
 //   - large: 是否在最上層多加一層「Ch. 1」（由 large-note.typ 使用）
-//   - 第一層：置中；large 時第一層為「章」，字級大一號、另起新頁
+//   - 第一層：置中，有無編號皆同；large 時第一層為「章」，另起新頁，有編號者字級大一號
 //   - 其餘層級：靠左
-//   - 無編號（目錄、參考文獻等）：原樣輸出
-#let heading-style(font: font-hei, large: false, body) = {
+//   - 間距：標題下方的間距等於內文段距（par.spacing）。標題後接內文時與原本相同；
+//     標題緊接下一個標題時（例如「壹、」之後直接是「一、」），兩者之間也有一個段距。
+//
+// 段距在套用 heading-style 之處以當時的內文字級換算為絕對長度，否則 em 會以標題字級
+// 計算。因此請在 text-style、par-style 之後套用（common-style 即是如此）；其後才改的
+// 字級或段距不會反映在標題間距上。
+#let heading-style(font: font-hei, large: false, body) = context {
   show heading: set text(font: font, weight: "bold")
+  show heading: set block(below: par.spacing.to-absolute())
 
   set heading(numbering: (..nums) => heading-number(nums.pos(), large: large))
 
   show heading: it => {
-    if it.numbering != none {
-      let displayed = {
-        counter(heading).display(it.numbering)
-        it.body
-      }
-      set par(first-line-indent: 0em)
-      if it.level == 1 {
-        if large {
-          set text(size: 1.25em)
-          pagebreak(weak: true)
-        }
-        set align(center)
-        displayed
-      } else {
-        set align(left)
-        displayed
-      }
+    let numbered = it.numbering != none
+    // 只輸出編號與標題文字，不交回 it：交回 it 會改用 Typst 內建的標題排版，
+    // 標題下方的間距較小，其後第一段也會失去首行縮排。
+    let displayed = {
+      if numbered { counter(heading).display(it.numbering) }
+      it.body
+    }
+    set par(first-line-indent: 0em)
+    if it.level == 1 {
+      if large { pagebreak(weak: true) }
+      set text(size: 1.25em) if large and numbered
+      set align(center)
+      displayed
     } else {
-      if large and it.level == 1 { pagebreak(weak: true) }
-      it
+      set align(left)
+      displayed
     }
   }
 
