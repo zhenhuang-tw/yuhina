@@ -16,7 +16,7 @@ From 1.0.0 on, breaking changes bump the major version, new features the minor v
 
 Changes in how a document looks, such as a different fallback font or heading number, are listed under "Changed" even when no name or parameter changes.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-11-23
 
 Initial release.
 
