@@ -1,7 +1,7 @@
 // yuhina 的最小完整範例
 // 編譯：typst compile examples/basic.typ --input USE_WIN=1（Windows）
 //       typst compile examples/basic.typ --input USE_LINUX=1（Linux）
-#import "@preview/yuhina:0.1.0": *
+#import "@preview/yuhina:0.2.0": *
 
 // 注意：中文句子請勿在原始碼中換行，否則 Typst 會在換行處插入空白。
 

@@ -16,7 +16,7 @@ From 1.0.0 on, breaking changes bump the major version, new features the minor v
 
 Changes in how a document looks, such as a different fallback font or heading number, are listed under "Changed" even when no name or parameter changes.
 
-## [Unreleased]
+## [0.2.0] - 2026-11-27
 
 ### Added
 
@@ -38,5 +38,5 @@ Initial release.
 - Cross-references to headings that print the full heading path, e.g. 見壹、二、(三).
 - `plain-links` to drop link styling from the rest of the document.
 
-[Unreleased]: https://github.com/zhenhuang-tw/yuhina/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/zhenhuang-tw/yuhina/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/zhenhuang-tw/yuhina/releases/tag/v0.1.0

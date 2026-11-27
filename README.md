@@ -14,7 +14,7 @@ The name `yuhina` comes from the [Taiwan yuhina](https://en.wikipedia.org/wiki/T
 ## Quick start
 
 ```typ
-#import "@preview/yuhina:0.1.0": *
+#import "@preview/yuhina:0.2.0": *
 
 #show: common-style.with(title: "文件標題", authors: "王小明")
 
@@ -51,7 +51,7 @@ On the first compilation, Typst downloads this package and its dependency [`@pre
 
 ## Public API
 
-`#import "@preview/yuhina:0.1.0": *` imports only the names listed below. Names not listed (helpers under `src/`, fallback font lists, and so on) are internal and may change at any time; do not rely on them.
+`#import "@preview/yuhina:0.2.0": *` imports only the names listed below. Names not listed (helpers under `src/`, fallback font lists, and so on) are internal and may change at any time; do not rely on them.
 
 ### Typesetting rules
 
@@ -239,12 +239,12 @@ See the [CHANGELOG](CHANGELOG.md) for the changes in each version.
 To work on this package before a new version is published, install it as a local package. Typst looks for local packages in `%APPDATA%\typst\packages\local\<name>\<version>`; create a directory junction there that points to this repository, so that changes in the repository take effect without copying:
 
 ```powershell
-$pkg = "$env:APPDATA\typst\packages\local\yuhina\0.1.0"
+$pkg = "$env:APPDATA\typst\packages\local\yuhina\0.2.0"
 New-Item -ItemType Directory -Force (Split-Path $pkg) | Out-Null
 New-Item -ItemType Junction -Path $pkg -Target (Resolve-Path .)
 ```
 
-Run this in the repository root; creating a junction does not require administrator rights. Then import with `#import "@local/yuhina:0.1.0": *`. The path contains the version number, so create a new junction after each version bump.
+Run this in the repository root; creating a junction does not require administrator rights. Then import with `#import "@local/yuhina:0.2.0": *`. The path contains the version number, so create a new junction after each version bump.
 
 ### Tests
 

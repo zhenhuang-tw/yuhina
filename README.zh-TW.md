@@ -14,7 +14,7 @@
 ## 快速開始
 
 ```typ
-#import "@preview/yuhina:0.1.0": *
+#import "@preview/yuhina:0.2.0": *
 
 #show: common-style.with(title: "文件標題", authors: "王小明")
 
@@ -51,7 +51,7 @@ typst compile file.typ --input USE_WIN=1
 
 ## 公開 API
 
-以 `#import "@preview/yuhina:0.1.0": *` 匯入時，只會取得下列名稱。未列出的名稱（`src/` 內的輔助函式、降級字型清單等）屬內部實作，可能隨時變更，請勿依賴。
+以 `#import "@preview/yuhina:0.2.0": *` 匯入時，只會取得下列名稱。未列出的名稱（`src/` 內的輔助函式、降級字型清單等）屬內部實作，可能隨時變更，請勿依賴。
 
 ### 排版規則
 
@@ -237,12 +237,12 @@ OFL 1.1 允許在文件中使用字型並散布產出的 PDF，但若要再散�
 修改本套件、尚未發布新版時，可安裝為本機套件。Typst 會在 `%APPDATA%\typst\packages\local\<名稱>\<版本>` 尋找本機套件；建立一個指向本 repo 的目錄連結（junction），修改 repo 後不必重新複製：
 
 ```powershell
-$pkg = "$env:APPDATA\typst\packages\local\yuhina\0.1.0"
+$pkg = "$env:APPDATA\typst\packages\local\yuhina\0.2.0"
 New-Item -ItemType Directory -Force (Split-Path $pkg) | Out-Null
 New-Item -ItemType Junction -Path $pkg -Target (Resolve-Path .)
 ```
 
-在本 repo 根目錄執行；建立 junction 不需要系統管理員權限。之後以 `#import "@local/yuhina:0.1.0": *` 匯入。路徑中含有版本號，升版後須另建新版本的 junction。
+在本 repo 根目錄執行；建立 junction 不需要系統管理員權限。之後以 `#import "@local/yuhina:0.2.0": *` 匯入。路徑中含有版本號，升版後須另建新版本的 junction。
 
 ### 測試
 
