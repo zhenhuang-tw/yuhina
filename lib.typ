@@ -11,6 +11,9 @@
 // 行內樣式
 #import "src/inline.typ": inquote, keyword
 
+// 標題內的註腳（目次不重複產生註腳）
+#import "src/heading.typ": hfn
+
 // 作者與標題區塊
 #import "src/title.typ": normalize-authors, title-block
 

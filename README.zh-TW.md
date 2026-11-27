@@ -86,6 +86,7 @@ typst compile file.typ --input USE_WIN=1
 | `font-song`、`font-hei`、`font-kai`、`font-yuan`、`font-fsong` | 字型清單：宋體、黑體、楷體、圓體、仿宋                                                       |
 | `keyword`                                                      | 行內重點強調（粗體）                                                                         |
 | `inquote`                                                      | 行內引用（預設楷體，可用 `font` 參數指定）                                                   |
+| `hfn`                                                          | 標題內的註腳，參數同 `footnote`；目次中不輸出，見[標題內的註腳](#標題內的註腳)               |
 | `title-block`                                                  | 置中的標題區塊：主標題、副標題、作者；參數 `title-thanks`、`subtitle`、`authors`、`font`、`weight` |
 | `normalize-authors`                                            | 把字串、單一 dictionary 或陣列形式的作者統一轉為陣列，供自訂模板使用                         |
 | `plain-links`                                                  | 移除其後內容的超連結樣式；請在目錄之後才套用，以免目錄失去頁內跳轉                           |
@@ -116,6 +117,16 @@ typst compile file.typ --input USE_WIN=1
 第一層超過十時依序進位，如「拾壹、」「貳拾、」。交互參照時輸出完整路徑，如 `@label` →「壹、二、(三)」，`@label[見]` →「見壹、二、(三)」；指向圖表、文獻等其他對象的參照不受影響。
 
 第一層標題置中，其餘層級靠左；無編號的標題（如目錄、參考文獻）亦同。標題下方的間距等於內文段距，因此標題緊接下一個標題時（如「壹、」之後直接是「一、」），間距與標題後接內文相同。段距以套用 `heading-style` 時的內文字級計算，個別套用時請放在 `text-style`、`par-style` 之後。
+
+### 標題內的註腳
+
+標題文字會原樣複製到目次，所以標題裡直接寫 `#footnote` 的話，目次會再產生一個註腳：頁底重複印出，其後的註號也全部往後錯號。標題裡的註腳請改用 `hfn`，參數與 `footnote` 相同，但在目次中不輸出：
+
+```typst
+= 緒論#hfn[本章部分內容曾發表於……]
+```
+
+`hfn` 靠 `heading-style` 判斷是否位於目次內（`common-style` 已包含），個別套用規則時請確認有套用 `heading-style`。目次的 `outline.entry` 另有自訂也沒有影響；但只有 `outline` 會被處理，若在頁首等處以 `query(heading)` 重印標題，請自行避免重複產生註腳。
 
 ## 字型降級
 

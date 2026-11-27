@@ -40,3 +40,17 @@
   let parts = range(1, n.len() + 1).map(i => heading-number(n.slice(0, i), large: large))
   parts.filter(p => p != none).map(p => p.trim()).join().trim(regex("[、.]"), at: end)
 }
+
+// ============================================================
+// § 標題內的註腳
+// ============================================================
+// 標題文字會原樣複製到目次（outline），標題裡若直接用 footnote，目次會再產生一個註腳，
+// 頁底重複印出，其後的註號全部往後錯號。hfn 於目次內不產生註腳，其餘情形與 footnote 相同。
+//
+// 是否位於目次內由 in-outline 記錄；它由 heading-style 在 outline 前後更新（見 styles.typ）。
+// 因此即使目次的 outline.entry 另有自訂，hfn 仍然有效。
+#let in-outline = state("yuhina-in-outline", false)
+
+// 標題內的註腳 / Example: #heading[標題#hfn[註腳內容]]
+// 參數與 footnote 相同；於目次中不輸出任何內容。
+#let hfn(..args) = context if not in-outline.get() { footnote(..args) }

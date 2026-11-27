@@ -16,6 +16,12 @@ From 1.0.0 on, breaking changes bump the major version, new features the minor v
 
 Changes in how a document looks, such as a different fallback font or heading number, are listed under "Changed" even when no name or parameter changes.
 
+## [Unreleased]
+
+### Added
+
+- `hfn` for footnotes inside headings. A plain `footnote` in a heading is copied into the outline, which prints it again at the bottom of the page and shifts every later footnote number; `hfn` prints nothing in the outline. It relies on `heading-style` (included in `common-style`).
+
 ## [0.1.0] - 2026-11-23
 
 Initial release.
@@ -32,4 +38,5 @@ Initial release.
 - Cross-references to headings that print the full heading path, e.g. 見壹、二、(三).
 - `plain-links` to drop link styling from the rest of the document.
 
+[Unreleased]: https://github.com/zhenhuang-tw/yuhina/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/zhenhuang-tw/yuhina/releases/tag/v0.1.0

@@ -86,6 +86,7 @@ Parameters of `common-style`:
 | `font-song`, `font-hei`, `font-kai`, `font-yuan`, `font-fsong` | Font lists: Song (serif), Hei (sans-serif), Kai (regular script), Yuan (rounded) and Fangsong                            |
 | `keyword`                                                      | Inline emphasis (bold)                                                                                                   |
 | `inquote`                                                      | Inline quotation (Kai by default; set another with the `font` parameter)                                                 |
+| `hfn`                                                          | Footnote inside a heading, same parameters as `footnote`; prints nothing in the outline, see [Footnotes in headings](#footnotes-in-headings) |
 | `title-block`                                                  | Centered title block with title, subtitle and authors; parameters `title-thanks`, `subtitle`, `authors`, `font`, `weight` |
 | `normalize-authors`                                            | Turns authors given as a string, a single dictionary or an array into an array, for custom templates                    |
 | `plain-links`                                                  | Removes link styling from the content after it; apply it after the outline so that the outline keeps its internal links |
@@ -116,6 +117,16 @@ An author can be a string or a dictionary with `name` and `thanks` (`thanks` is 
 Top-level numbers beyond ten continue as "拾壹、", "貳拾、" and so on. Cross-references print the full path: `@label` gives "壹、二、(三)" and `@label[見]` gives "見壹、二、(三)". References to figures, bibliography entries and other targets are not affected.
 
 Level-1 headings are centered and the other levels are left-aligned; unnumbered headings, such as the outline and bibliography titles, follow the same rule. The space below a heading equals the paragraph spacing, so a heading followed directly by another heading (e.g. "壹、" right before "一、") is spaced the same as a heading followed by body text. The spacing is computed at the body text size in effect where `heading-style` is applied; when applying the rules one by one, apply it after `text-style` and `par-style`.
+
+### Footnotes in headings
+
+A heading is copied verbatim into the outline, so a plain `#footnote` in a heading makes the outline create a footnote of its own: it is printed again at the bottom of the page, and every footnote number after it is shifted. Use `hfn` for footnotes in headings. It takes the same arguments as `footnote` but prints nothing in the outline:
+
+```typst
+= 緒論#hfn[本章部分內容曾發表於……]
+```
+
+`hfn` relies on `heading-style` to know whether it is inside an outline (`common-style` includes it), so make sure `heading-style` is applied when applying the rules one by one. A custom `outline.entry` does not matter. Only `outline` is handled, though: if you reprint headings elsewhere, e.g. with `query(heading)` in a page header, avoid duplicating their footnotes yourself.
 
 ## Font fallback
 

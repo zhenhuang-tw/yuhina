@@ -3,7 +3,7 @@
 
 #import "fonts.typ": font-hei, font-kai, font-song, show-cn-fakebold-smart
 #import "title.typ": normalize-authors
-#import "heading.typ": heading-number, heading-path
+#import "heading.typ": heading-number, heading-path, in-outline
 
 // ============================================================
 // § 可個別套用的排版規則
@@ -111,6 +111,8 @@
 //   - 其餘層級：靠左
 //   - 間距：標題下方的間距等於內文段距（par.spacing）。標題後接內文時與原本相同；
 //     標題緊接下一個標題時（例如「壹、」之後直接是「一、」），兩者之間也有一個段距。
+//   - 標題內的註腳：請用 hfn 而非 footnote，否則目次會再產生一個註腳（見 heading.typ）。
+//     本函式於 outline 前後記錄「位於目次內」，hfn 據此在目次中不輸出。
 //
 // 段距在套用 heading-style 之處以當時的內文字級換算為絕對長度，否則 em 會以標題字級
 // 計算。因此請在 text-style、par-style 之後套用（common-style 即是如此）；其後才改的
@@ -120,6 +122,13 @@
   show heading: set block(below: par.spacing.to-absolute())
 
   set heading(numbering: (..nums) => heading-number(nums.pos(), large: large))
+
+  // 供 hfn 判斷是否位於目次內；包在 outline 外層，故不受 outline.entry 的自訂影響
+  show outline: it => {
+    in-outline.update(true)
+    it
+    in-outline.update(false)
+  }
 
   show heading: it => {
     let numbered = it.numbering != none

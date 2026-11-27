@@ -13,6 +13,8 @@
   // 行內樣式
   "inquote",
   "keyword",
+  // 標題內的註腳
+  "hfn",
   // 作者與標題區塊
   "normalize-authors",
   "title-block",
